@@ -1,0 +1,2 @@
+-- Seed data is intentionally light because app records are user-owned through Supabase Auth.
+-- Add local development users through the Supabase dashboard or CLI auth fixtures.

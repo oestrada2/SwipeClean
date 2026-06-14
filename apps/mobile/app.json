@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "SwipeClean",
+    "slug": "swipeclean",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": ["android", "ios"],
+    "android": {
+      "package": "com.swipeclean.app"
+    },
+    "ios": {
+      "bundleIdentifier": "com.swipeclean.app"
+    }
+  }
+}
