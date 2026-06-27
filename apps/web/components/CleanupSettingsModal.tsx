@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { useTheme } from '../lib/context';
 import { getMockAlbums } from '../lib/mockData';
-import { theme } from '../lib/theme';
 import { DEFAULT_CLEANUP_SETTINGS } from '../lib/types';
 import type {
   AppearanceMode,
@@ -14,6 +14,7 @@ import type {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
   return (
     <p
       style={{
@@ -21,7 +22,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
         fontSize: 11,
         fontWeight: 700,
         letterSpacing: 1.2,
-        color: 'rgba(255,255,255,0.3)',
+        color: theme.colors.sectionLabel,
         textTransform: 'uppercase',
       }}
     >
@@ -31,7 +32,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function Divider() {
-  return <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', margin: '6px 0 0' }} />;
+  const theme = useTheme();
+  return <div style={{ height: 1, background: theme.colors.divider, margin: '6px 0 0' }} />;
 }
 
 function RadioRow({
@@ -43,6 +45,7 @@ function RadioRow({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const theme = useTheme();
   return (
     <button
       onClick={onSelect}
@@ -64,7 +67,7 @@ function RadioRow({
           width: 20,
           height: 20,
           borderRadius: '50%',
-          border: `2px solid ${selected ? theme.colors.primary : 'rgba(255,255,255,0.25)'}`,
+          border: `2px solid ${selected ? theme.colors.primary : theme.colors.chevron}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -79,7 +82,7 @@ function RadioRow({
       </span>
       <span
         style={{
-          color: selected ? '#fff' : 'rgba(255,255,255,0.65)',
+          color: selected ? theme.colors.text : theme.colors.textSecondary,
           fontSize: 15,
           fontWeight: selected ? 600 : 400,
         }}
@@ -101,6 +104,7 @@ function ToggleRow({
   value: boolean;
   onChange: (v: boolean) => void;
 }) {
+  const theme = useTheme();
   return (
     <div
       style={{
@@ -112,11 +116,11 @@ function ToggleRow({
       }}
     >
       <div>
-        <p style={{ margin: 0, color: 'rgba(255,255,255,0.85)', fontSize: 15, fontWeight: 500 }}>
+        <p style={{ margin: 0, color: theme.colors.textSecondary, fontSize: 15, fontWeight: 500 }}>
           {label}
         </p>
         {sub && (
-          <p style={{ margin: '2px 0 0', color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>{sub}</p>
+          <p style={{ margin: '2px 0 0', color: theme.colors.textTertiary, fontSize: 12 }}>{sub}</p>
         )}
       </div>
       <button
@@ -125,7 +129,7 @@ function ToggleRow({
           width: 48,
           height: 28,
           borderRadius: 99,
-          background: value ? theme.colors.primary : 'rgba(255,255,255,0.15)',
+          background: value ? theme.colors.primary : theme.colors.toggleOff,
           border: 'none',
           cursor: 'pointer',
           position: 'relative',
@@ -163,6 +167,7 @@ function NavRow({
   onPress: () => void;
   accent?: string;
 }) {
+  const theme = useTheme();
   return (
     <button
       onClick={onPress}
@@ -183,7 +188,7 @@ function NavRow({
         <p
           style={{
             margin: 0,
-            color: accent ?? 'rgba(255,255,255,0.85)',
+            color: accent ?? theme.colors.textSecondary,
             fontSize: 15,
             fontWeight: 500,
           }}
@@ -191,10 +196,10 @@ function NavRow({
           {label}
         </p>
         {sub && (
-          <p style={{ margin: '2px 0 0', color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>{sub}</p>
+          <p style={{ margin: '2px 0 0', color: theme.colors.textTertiary, fontSize: 12 }}>{sub}</p>
         )}
       </div>
-      <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 22, lineHeight: 1 }}>›</span>
+      <span style={{ color: theme.colors.chevron, fontSize: 22, lineHeight: 1 }}>›</span>
     </button>
   );
 }
@@ -208,11 +213,12 @@ function SegmentedControl<T extends string>({
   value: T;
   onChange: (v: T) => void;
 }) {
+  const theme = useTheme();
   return (
     <div
       style={{
         display: 'flex',
-        background: 'rgba(255,255,255,0.07)',
+        background: theme.colors.inputBackground,
         borderRadius: 10,
         padding: 3,
         gap: 2,
@@ -225,11 +231,13 @@ function SegmentedControl<T extends string>({
           style={{
             flex: 1,
             padding: '8px 4px',
-            background: value === opt.id ? 'rgba(255,255,255,0.1)' : 'transparent',
-            border: value === opt.id ? '1px solid rgba(255,255,255,0.12)' : '1px solid transparent',
+            background: value === opt.id ? theme.colors.surfaceOverlay : 'transparent',
+            border: value === opt.id
+              ? `1px solid ${theme.colors.inputBorder}`
+              : '1px solid transparent',
             borderRadius: 8,
             cursor: 'pointer',
-            color: value === opt.id ? '#fff' : 'rgba(255,255,255,0.4)',
+            color: value === opt.id ? theme.colors.text : theme.colors.muted,
             fontSize: 13,
             fontWeight: value === opt.id ? 700 : 400,
             fontFamily: 'inherit',
@@ -254,6 +262,7 @@ function ProtectedAlbumsModal({
   onChange: (albums: string[]) => void;
   onClose: () => void;
 }) {
+  const theme = useTheme();
   const albums = getMockAlbums();
   const [selected, setSelected] = useState(new Set(protectedAlbums));
 
@@ -271,7 +280,7 @@ function ProtectedAlbumsModal({
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.6)',
+        background: theme.colors.overlay,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
@@ -293,15 +302,15 @@ function ProtectedAlbumsModal({
           style={{
             width: 40,
             height: 4,
-            background: 'rgba(255,255,255,0.2)',
+            background: theme.colors.chevron,
             borderRadius: 99,
             margin: '0 auto 20px',
           }}
         />
-        <h3 style={{ margin: '0 0 4px', fontSize: 20, fontWeight: 900, color: '#fff' }}>
+        <h3 style={{ margin: '0 0 4px', fontSize: 20, fontWeight: 900, color: theme.colors.text }}>
           Protected Albums
         </h3>
-        <p style={{ margin: '0 0 20px', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
+        <p style={{ margin: '0 0 20px', color: theme.colors.muted, fontSize: 13 }}>
           Checked albums are excluded from normal swiping
         </p>
         {albums.map((album) => {
@@ -326,7 +335,7 @@ function ProtectedAlbumsModal({
                 padding: '13px 0',
                 background: 'none',
                 border: 'none',
-                borderBottom: '1px solid rgba(255,255,255,0.07)',
+                borderBottom: `1px solid ${theme.colors.divider}`,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
                 textAlign: 'left',
@@ -335,10 +344,10 @@ function ProtectedAlbumsModal({
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <span style={{ fontSize: 22 }}>{icon}</span>
                 <div>
-                  <p style={{ margin: 0, color: '#fff', fontSize: 15, fontWeight: 500 }}>
+                  <p style={{ margin: 0, color: theme.colors.text, fontSize: 15, fontWeight: 500 }}>
                     {album.name}
                   </p>
-                  <p style={{ margin: '2px 0 0', color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>
+                  <p style={{ margin: '2px 0 0', color: theme.colors.textTertiary, fontSize: 12 }}>
                     {album.count} items
                   </p>
                 </div>
@@ -348,7 +357,7 @@ function ProtectedAlbumsModal({
                   width: 22,
                   height: 22,
                   borderRadius: 6,
-                  border: `2px solid ${isProtected ? '#EF4444' : 'rgba(255,255,255,0.25)'}`,
+                  border: `2px solid ${isProtected ? '#EF4444' : theme.colors.chevron}`,
                   background: isProtected ? '#EF4444' : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
@@ -398,6 +407,7 @@ function NotificationsModal({
   onChange: (n: NotificationSettings) => void;
   onClose: () => void;
 }) {
+  const theme = useTheme();
   const [draft, setDraft] = useState<NotificationSettings>({ ...notifications });
 
   const rows: { key: keyof NotificationSettings; label: string; sub: string }[] = [
@@ -414,7 +424,7 @@ function NotificationsModal({
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.6)',
+        background: theme.colors.overlay,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
@@ -440,15 +450,15 @@ function NotificationsModal({
             style={{
               width: 40,
               height: 4,
-              background: 'rgba(255,255,255,0.2)',
+              background: theme.colors.chevron,
               borderRadius: 99,
               margin: '0 auto 20px',
             }}
           />
-          <h3 style={{ margin: '0 0 4px', fontSize: 20, fontWeight: 900, color: '#fff' }}>
+          <h3 style={{ margin: '0 0 4px', fontSize: 20, fontWeight: 900, color: theme.colors.text }}>
             Notification Preferences
           </h3>
-          <p style={{ margin: '0 0 16px', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
+          <p style={{ margin: '0 0 16px', color: theme.colors.muted, fontSize: 13 }}>
             Control when SwipeClean can notify you
           </p>
         </div>
@@ -461,15 +471,15 @@ function NotificationsModal({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '13px 0',
-                borderBottom: '1px solid rgba(255,255,255,0.07)',
+                borderBottom: `1px solid ${theme.colors.divider}`,
                 gap: 12,
               }}
             >
               <div>
-                <p style={{ margin: 0, color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: 500 }}>
+                <p style={{ margin: 0, color: theme.colors.textSecondary, fontSize: 14, fontWeight: 500 }}>
                   {label}
                 </p>
-                <p style={{ margin: '2px 0 0', color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>
+                <p style={{ margin: '2px 0 0', color: theme.colors.textTertiary, fontSize: 12 }}>
                   {sub}
                 </p>
               </div>
@@ -479,7 +489,7 @@ function NotificationsModal({
                   width: 44,
                   height: 26,
                   borderRadius: 99,
-                  background: draft[key] ? theme.colors.primary : 'rgba(255,255,255,0.12)',
+                  background: draft[key] ? theme.colors.primary : theme.colors.toggleOff,
                   border: 'none',
                   cursor: 'pointer',
                   position: 'relative',
@@ -506,7 +516,13 @@ function NotificationsModal({
           ))}
           <div style={{ height: 8 }} />
         </div>
-        <div style={{ padding: '12px 20px 36px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
+        <div
+          style={{
+            padding: '12px 20px 36px',
+            borderTop: `1px solid ${theme.colors.divider}`,
+            flexShrink: 0,
+          }}
+        >
           <button
             onClick={() => { onChange(draft); onClose(); }}
             style={{
@@ -543,6 +559,7 @@ export function CleanupSettingsModal({
   onClose: () => void;
   onShowPaywall: () => void;
 }) {
+  const theme = useTheme();
   const [draft, setDraft] = useState<CleanupSettings>({
     ...settings,
     protectedAlbums: [...settings.protectedAlbums],
@@ -574,7 +591,7 @@ export function CleanupSettingsModal({
         style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.7)',
+          background: theme.colors.overlay,
           display: 'flex',
           alignItems: 'flex-end',
           justifyContent: 'center',
@@ -608,7 +625,7 @@ export function CleanupSettingsModal({
               style={{
                 width: 40,
                 height: 4,
-                background: 'rgba(255,255,255,0.2)',
+                background: theme.colors.chevron,
                 borderRadius: 99,
               }}
             />
@@ -629,7 +646,7 @@ export function CleanupSettingsModal({
                 margin: 0,
                 fontSize: 22,
                 fontWeight: 900,
-                color: '#fff',
+                color: theme.colors.text,
                 letterSpacing: -0.5,
               }}
             >
@@ -641,9 +658,9 @@ export function CleanupSettingsModal({
                 width: 32,
                 height: 32,
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.1)',
+                background: theme.colors.surfaceOverlay,
                 border: 'none',
-                color: 'rgba(255,255,255,0.7)',
+                color: theme.colors.muted,
                 fontSize: 18,
                 cursor: 'pointer',
                 display: 'flex',
@@ -777,7 +794,7 @@ export function CleanupSettingsModal({
             style={{
               flexShrink: 0,
               padding: '12px 20px 36px',
-              borderTop: '1px solid rgba(255,255,255,0.08)',
+              borderTop: `1px solid ${theme.colors.divider}`,
               display: 'flex',
               gap: 8,
             }}
@@ -787,10 +804,10 @@ export function CleanupSettingsModal({
               style={{
                 flex: 1,
                 padding: '13px 0',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: theme.colors.surfaceOverlay,
+                border: `1px solid ${theme.colors.inputBorder}`,
                 borderRadius: theme.radius.md,
-                color: 'rgba(255,255,255,0.5)',
+                color: theme.colors.muted,
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -804,10 +821,10 @@ export function CleanupSettingsModal({
               style={{
                 flex: 1,
                 padding: '13px 0',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: theme.colors.surfaceOverlay,
+                border: `1px solid ${theme.colors.inputBorder}`,
                 borderRadius: theme.radius.md,
-                color: 'rgba(255,255,255,0.65)',
+                color: theme.colors.textSecondary,
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: 'pointer',

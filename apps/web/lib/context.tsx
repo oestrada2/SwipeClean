@@ -1,6 +1,8 @@
 'use client';
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { mockHistory } from './mockData';
+import { buildTheme } from './theme';
+import type { Theme } from './theme';
 import { DEFAULT_CLEANUP_SETTINGS } from './types';
 import type { CleanupCategory, CleanupSettings, DeletionStats, MediaAsset, SessionRecord, Tab } from './types';
 
@@ -27,6 +29,7 @@ type AppContextType = {
 };
 
 const AppContext = createContext<AppContextType | null>(null);
+const ThemeContext = createContext<Theme>(buildTheme('dark'));
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -37,6 +40,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [cleanupAlbum, setCleanupAlbumState] = useState<string | null>(null);
   const [cleanupSettings, setCleanupSettingsState] = useState<CleanupSettings>(DEFAULT_CLEANUP_SETTINGS);
   const isPremium = false;
+
+  const [systemDark, setSystemDark] = useState(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemDark(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const activeTheme = useMemo(() => {
+    const { appearance } = cleanupSettings;
+    const mode = appearance === 'system' ? (systemDark ? 'dark' : 'light') : appearance;
+    return buildTheme(mode);
+  }, [cleanupSettings.appearance, systemDark]);
 
   const setTab = useCallback((tab: Tab) => setActiveTab(tab), []);
   const setCleanupCategory = useCallback((cat: CleanupCategory | null) => setCleanupCategoryState(cat), []);
@@ -71,31 +90,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const clearDeletionStats = useCallback(() => setDeletionStats(null), []);
 
   return (
-    <AppContext.Provider
-      value={{
-        activeTab,
-        deleteBin,
-        history,
-        deletionStats,
-        cleanupCategory,
-        cleanupAlbum,
-        cleanupSettings,
-        isPremium,
-        setTab,
-        setCleanupCategory,
-        setCleanupAlbum,
-        setCleanupSettings,
-        addToDeleteBin,
-        removeFromDeleteBin,
-        removeManyFromDeleteBin,
-        clearDeleteBin,
-        addSessionToHistory,
-        showDeletionSuccess,
-        clearDeletionStats,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <ThemeContext.Provider value={activeTheme}>
+      <AppContext.Provider
+        value={{
+          activeTab,
+          deleteBin,
+          history,
+          deletionStats,
+          cleanupCategory,
+          cleanupAlbum,
+          cleanupSettings,
+          isPremium,
+          setTab,
+          setCleanupCategory,
+          setCleanupAlbum,
+          setCleanupSettings,
+          addToDeleteBin,
+          removeFromDeleteBin,
+          removeManyFromDeleteBin,
+          clearDeleteBin,
+          addSessionToHistory,
+          showDeletionSuccess,
+          clearDeletionStats,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </ThemeContext.Provider>
   );
 }
 
@@ -103,4 +124,8 @@ export function useApp() {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
+}
+
+export function useTheme(): Theme {
+  return useContext(ThemeContext);
 }

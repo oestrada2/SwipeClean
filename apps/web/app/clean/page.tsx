@@ -1,12 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CleanupSettingsModal } from '../../components/CleanupSettingsModal';
 import { DeleteBinView } from '../../components/DeleteBinView';
 import { HistoryView } from '../../components/HistoryView';
 import { HomeDashboard } from '../../components/HomeDashboard';
+import { OnboardingFlow } from '../../components/OnboardingFlow';
 import { SwipeView } from '../../components/SwipeView';
-import { AppProvider, useApp } from '../../lib/context';
-import { theme } from '../../lib/theme';
+import { AppProvider, useApp, useTheme } from '../../lib/context';
 import type { Tab } from '../../lib/types';
 
 const TABS: Array<{ id: Tab; label: string; icon: string }> = [
@@ -16,8 +16,21 @@ const TABS: Array<{ id: Tab; label: string; icon: string }> = [
 ];
 
 function AppShell() {
+  const theme = useTheme();
   const { activeTab, setTab, deleteBin, cleanupSettings, setCleanupSettings } = useApp();
   const [showSettings, setShowSettings] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem('swipeclean_onboarded')) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  function handleOnboardingComplete() {
+    localStorage.setItem('swipeclean_onboarded', '1');
+    setShowOnboarding(false);
+  }
 
   return (
     <div
@@ -134,6 +147,10 @@ function AppShell() {
           onClose={() => setShowSettings(false)}
           onShowPaywall={() => setShowSettings(false)}
         />
+      )}
+
+      {showOnboarding && (
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 import { useRef } from 'react';
-import { theme } from '../lib/theme';
+import { useTheme } from '../lib/context';
 import type { MediaAsset } from '../lib/types';
 
 type Props = {
@@ -11,6 +11,7 @@ type Props = {
 };
 
 export function SwipeCard({ asset, onSwipeLeft, onSwipeRight, onInfo }: Props) {
+  const theme = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   const keepRef = useRef<HTMLDivElement>(null);
   const deleteRef = useRef<HTMLDivElement>(null);
@@ -84,6 +85,7 @@ export function SwipeCard({ asset, onSwipeLeft, onSwipeRight, onInfo }: Props) {
       style={{
         position: 'relative',
         width: '100%',
+        height: '100%',
         borderRadius: theme.radius.xl,
         overflow: 'hidden',
         backgroundColor: theme.colors.surface,
@@ -100,7 +102,7 @@ export function SwipeCard({ asset, onSwipeLeft, onSwipeRight, onInfo }: Props) {
         draggable={false}
         style={{
           width: '100%',
-          aspectRatio: '3 / 4',
+          height: '100%',
           objectFit: 'cover',
           display: 'block',
           pointerEvents: 'none',
@@ -230,10 +232,12 @@ export function SwipeCard({ asset, onSwipeLeft, onSwipeRight, onInfo }: Props) {
 }
 
 export function BehindCard({ asset }: { asset: MediaAsset }) {
+  const theme = useTheme();
   return (
     <div
       style={{
         width: '100%',
+        height: '100%',
         borderRadius: theme.radius.xl,
         overflow: 'hidden',
         backgroundColor: theme.colors.surface,
@@ -246,7 +250,7 @@ export function BehindCard({ asset }: { asset: MediaAsset }) {
         draggable={false}
         style={{
           width: '100%',
-          aspectRatio: '3 / 4',
+          height: '100%',
           objectFit: 'cover',
           display: 'block',
           pointerEvents: 'none',

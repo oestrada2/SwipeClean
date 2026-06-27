@@ -1,10 +1,10 @@
 'use client';
-import { useApp } from '../lib/context';
+import { useApp, useTheme } from '../lib/context';
 import { formatBytes } from '../lib/formatBytes';
-import { theme } from '../lib/theme';
 import type { SessionRecord } from '../lib/types';
 
 export function HistoryView() {
+  const theme = useTheme();
   const { history } = useApp();
 
   const totalFreed = history.reduce((sum, s) => sum + s.bytesFreed, 0);
@@ -96,6 +96,7 @@ function TotalChip({
   label: string;
   color: string;
 }) {
+  const theme = useTheme();
   return (
     <div
       style={{
@@ -114,6 +115,7 @@ function TotalChip({
 }
 
 function SessionCard({ session }: { session: SessionRecord }) {
+  const theme = useTheme();
   const date = new Date(session.date);
   const dateStr = date.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -179,6 +181,7 @@ function StatItem({
   label: string;
   color: string;
 }) {
+  const theme = useTheme();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <span style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1 }}>{value}</span>

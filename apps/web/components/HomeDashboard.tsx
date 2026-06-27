@@ -1,9 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { CleanupSettingsModal } from './CleanupSettingsModal';
-import { useApp } from '../lib/context';
+import { useApp, useTheme } from '../lib/context';
 import { getMockAlbums } from '../lib/mockData';
-import { theme } from '../lib/theme';
 import type { CleanupCategory } from '../lib/types';
 
 type CategoryDef = {
@@ -26,6 +25,7 @@ function getMonthLabel(offset: number): string {
 }
 
 export function HomeDashboard() {
+  const theme = useTheme();
   const { setTab, setCleanupCategory, setCleanupAlbum, cleanupSettings, setCleanupSettings, isPremium } = useApp();
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
@@ -131,7 +131,7 @@ export function HomeDashboard() {
   }
 
   return (
-    <div style={{ background: '#111827', minHeight: '100vh', paddingBottom: 80 }}>
+    <div style={{ background: theme.colors.background, minHeight: '100vh', paddingBottom: 80 }}>
       {/* Header */}
       <div
         style={{
@@ -141,18 +141,25 @@ export function HomeDashboard() {
           padding: '56px 20px 20px',
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontSize: 28,
-            fontWeight: 900,
-            color: '#fff',
-            letterSpacing: -0.5,
-            lineHeight: 1,
-          }}
-        >
-          SwipeClean
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img
+            src="/app-icon.png"
+            alt=""
+            style={{ width: 36, height: 36, objectFit: 'contain' }}
+          />
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 26,
+              fontWeight: 900,
+              color: theme.colors.text,
+              letterSpacing: -0.5,
+              lineHeight: 1,
+            }}
+          >
+            SwipeClean
+          </h1>
+        </div>
         <div style={{ display: 'flex', gap: 8 }}>
           {[
             { icon: '⚙', label: 'Settings', onTap: () => setShowSettings(true) },
@@ -167,9 +174,9 @@ export function HomeDashboard() {
                 width: 38,
                 height: 38,
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.8)',
+                background: theme.colors.surfaceOverlay,
+                border: `1px solid ${theme.colors.divider}`,
+                color: theme.colors.textSecondary,
                 fontSize: 17,
                 cursor: 'pointer',
                 display: 'flex',
@@ -187,7 +194,7 @@ export function HomeDashboard() {
       <p
         style={{
           margin: '0 20px 20px',
-          color: 'rgba(255,255,255,0.45)',
+          color: theme.colors.muted,
           fontSize: 14,
           fontWeight: 500,
           letterSpacing: 0.2,
@@ -216,8 +223,8 @@ export function HomeDashboard() {
                 alignItems: 'center',
                 gap: 6,
                 padding: '6px 10px',
-                background: checked ? 'rgba(109,40,217,0.25)' : 'rgba(255,255,255,0.05)',
-                border: `1px solid ${checked ? '#6D28D9' : 'rgba(255,255,255,0.1)'}`,
+                background: checked ? theme.colors.primaryLight : theme.colors.inputBackground,
+                border: `1px solid ${checked ? theme.colors.primary : theme.colors.border}`,
                 borderRadius: 8,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -228,8 +235,8 @@ export function HomeDashboard() {
                   width: 14,
                   height: 14,
                   borderRadius: 3,
-                  border: `1.5px solid ${checked ? '#6D28D9' : 'rgba(255,255,255,0.3)'}`,
-                  background: checked ? '#6D28D9' : 'transparent',
+                  border: `1.5px solid ${checked ? theme.colors.primary : theme.colors.chevron}`,
+                  background: checked ? theme.colors.primary : 'transparent',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -243,7 +250,7 @@ export function HomeDashboard() {
                 )}
               </span>
               <span style={{ fontSize: 12 }}>{icon}</span>
-              <span style={{ color: checked ? '#fff' : 'rgba(255,255,255,0.6)', fontSize: 12, fontWeight: 600 }}>
+              <span style={{ color: checked ? theme.colors.text : theme.colors.textSecondary, fontSize: 12, fontWeight: 600 }}>
                 {label}
               </span>
             </button>
@@ -380,13 +387,14 @@ function AlbumPickerModal({
   onSelect: (album: string) => void;
   onClose: () => void;
 }) {
+  const theme = useTheme();
   const albums = getMockAlbums();
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.7)',
+        background: theme.colors.overlay,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
@@ -397,7 +405,7 @@ function AlbumPickerModal({
     >
       <div
         style={{
-          background: '#1F2937',
+          background: theme.colors.surface,
           borderRadius: '24px 24px 0 0',
           width: '100%',
           maxWidth: 480,
@@ -414,7 +422,7 @@ function AlbumPickerModal({
             style={{
               width: 40,
               height: 4,
-              background: 'rgba(255,255,255,0.2)',
+              background: theme.colors.chevron,
               borderRadius: 99,
               margin: '0 auto 20px',
             }}
@@ -424,13 +432,13 @@ function AlbumPickerModal({
               margin: 0,
               fontSize: 20,
               fontWeight: 900,
-              color: '#fff',
+              color: theme.colors.text,
               letterSpacing: -0.5,
             }}
           >
             choose an album
           </h3>
-          <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
+          <p style={{ margin: '4px 0 0', color: theme.colors.muted, fontSize: 13 }}>
             {albums.reduce((s, a) => s + a.count, 0)} items across {albums.length} albums
           </p>
         </div>
@@ -447,8 +455,8 @@ function AlbumPickerModal({
                 justifyContent: 'space-between',
                 width: '100%',
                 padding: '14px 16px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: theme.colors.inputBackground,
+                border: `1px solid ${theme.colors.divider}`,
                 borderRadius: 14,
                 marginBottom: 8,
                 cursor: 'pointer',
@@ -466,7 +474,7 @@ function AlbumPickerModal({
                     ? '💬'
                     : '📁'}
                 </span>
-                <span style={{ fontSize: 17, fontWeight: 700, color: '#fff' }}>
+                <span style={{ fontSize: 17, fontWeight: 700, color: theme.colors.text }}>
                   {album.name}
                 </span>
               </div>
@@ -474,8 +482,8 @@ function AlbumPickerModal({
                 style={{
                   fontSize: 13,
                   fontWeight: 600,
-                  color: 'rgba(255,255,255,0.45)',
-                  background: 'rgba(255,255,255,0.08)',
+                  color: theme.colors.muted,
+                  background: theme.colors.inputBackground,
                   padding: '4px 10px',
                   borderRadius: 99,
                 }}
@@ -491,12 +499,13 @@ function AlbumPickerModal({
 }
 
 function PremiumModal({ onClose }: { onClose: () => void }) {
+  const theme = useTheme();
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.7)',
+        background: theme.colors.overlay,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
@@ -507,7 +516,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
     >
       <div
         style={{
-          background: '#1F2937',
+          background: theme.colors.surface,
           borderRadius: '24px 24px 0 0',
           padding: '32px 24px 36px',
           width: '100%',
@@ -520,18 +529,18 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
           style={{
             width: 40,
             height: 4,
-            background: 'rgba(255,255,255,0.2)',
+            background: theme.colors.chevron,
             borderRadius: 99,
             margin: '0 auto 24px',
           }}
         />
         <span style={{ fontSize: 52 }}>✨</span>
-        <h3 style={{ margin: '12px 0 8px', fontSize: 26, fontWeight: 900, color: '#fff' }}>
+        <h3 style={{ margin: '12px 0 8px', fontSize: 26, fontWeight: 900, color: theme.colors.text }}>
           SwipeClean Pro
         </h3>
         <p
           style={{
-            color: 'rgba(255,255,255,0.55)',
+            color: theme.colors.muted,
             fontSize: 15,
             lineHeight: 1.55,
             margin: '0 0 28px',
@@ -566,7 +575,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
             border: 'none',
             fontSize: 15,
             fontWeight: 600,
-            color: 'rgba(255,255,255,0.4)',
+            color: theme.colors.muted,
             cursor: 'pointer',
             fontFamily: 'inherit',
           }}

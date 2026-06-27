@@ -1,8 +1,7 @@
 'use client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useApp } from '../lib/context';
+import { useApp, useTheme } from '../lib/context';
 import { formatBytes } from '../lib/formatBytes';
-import { theme } from '../lib/theme';
 import type { MediaAsset } from '../lib/types';
 
 type FilterKind = 'all' | 'photo' | 'video';
@@ -10,6 +9,7 @@ type DeleteTarget = 'selected' | 'all';
 type ConfirmStep = 1 | 2;
 
 export function DeleteBinView() {
+  const theme = useTheme();
   const {
     deleteBin,
     removeFromDeleteBin,
@@ -443,6 +443,7 @@ export function DeleteBinView() {
 }
 
 function Checkbox({ checked }: { checked: boolean }) {
+  const theme = useTheme();
   return (
     <div
       style={{
@@ -477,6 +478,7 @@ function BinItem({
   onToggle: () => void;
   onRestore: () => void;
 }) {
+  const theme = useTheme();
   return (
     <div
       onClick={isSelectMode ? onToggle : undefined}
@@ -578,6 +580,7 @@ function ConfirmModal({
   onFinalDelete: () => void;
   onCancel: () => void;
 }) {
+  const theme = useTheme();
   return (
     <div
       style={{

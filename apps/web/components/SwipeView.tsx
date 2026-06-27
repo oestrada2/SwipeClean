@@ -1,15 +1,15 @@
 'use client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehindCard, SwipeCard } from './SwipeCard';
-import { useApp } from '../lib/context';
+import { useApp, useTheme } from '../lib/context';
 import { formatBytes } from '../lib/formatBytes';
 import { filterMedia } from '../lib/mockData';
-import { theme } from '../lib/theme';
 import type { MediaAsset } from '../lib/types';
 
 type LastAction = { asset: MediaAsset; decision: 'keep' | 'delete' };
 
 export function SwipeView() {
+  const theme = useTheme();
   const { addToDeleteBin, removeFromDeleteBin, addSessionToHistory, setTab, cleanupCategory, cleanupAlbum, cleanupSettings } =
     useApp();
 
@@ -177,14 +177,15 @@ export function SwipeView() {
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 0', minHeight: 'calc(100vh - 72px)', background: theme.colors.background }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 72px)', background: theme.colors.background, overflow: 'hidden' }}>
       {/* Header */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 8,
+          flexShrink: 0,
+          padding: '12px 16px 6px',
         }}
       >
         <span
@@ -240,8 +241,9 @@ export function SwipeView() {
           height: 3,
           background: theme.colors.border,
           borderRadius: 99,
-          marginBottom: 16,
+          margin: '0 16px 8px',
           overflow: 'hidden',
+          flexShrink: 0,
         }}
       >
         <div
@@ -255,15 +257,16 @@ export function SwipeView() {
         />
       </div>
 
-      {/* Card stack */}
-      <div style={{ position: 'relative' }}>
+      {/* Card stack — fills remaining space */}
+      <div style={{ position: 'relative', flex: 1, minHeight: 0, margin: '0 16px' }}>
         {nextAsset && (
           <div
             style={{
               position: 'absolute',
-              top: 14,
+              top: 10,
               left: 0,
               right: 0,
+              bottom: 0,
               opacity: 0.72,
               transform: 'scale(0.94)',
               transformOrigin: 'top center',
@@ -275,7 +278,7 @@ export function SwipeView() {
           </div>
         )}
         {currentAsset && (
-          <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
             <SwipeCard
               key={currentAsset.id}
               asset={currentAsset}
@@ -287,61 +290,41 @@ export function SwipeView() {
         )}
       </div>
 
-      {/* Hint row */}
-      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-        <div
+      {/* DELETE / KEEP buttons — pinned above tab bar */}
+      <div style={{ flexShrink: 0, display: 'flex', gap: 10, padding: '10px 16px 14px' }}>
+        <button
+          onClick={handleSwipeLeft}
           style={{
             flex: 1,
-            padding: 10,
+            padding: '16px 0',
             background: theme.colors.deleteLight,
-            borderRadius: theme.radius.md,
-            textAlign: 'center',
+            border: 'none',
+            borderRadius: theme.radius.lg,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
           }}
         >
-          <span
-            style={{
-              color: theme.colors.delete,
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: 0.5,
-            }}
-          >
+          <span style={{ color: theme.colors.delete, fontSize: 15, fontWeight: 800, letterSpacing: 0.5 }}>
             ← DELETE
           </span>
-        </div>
-        <div
+        </button>
+        <button
+          onClick={handleSwipeRight}
           style={{
             flex: 1,
-            padding: 10,
+            padding: '16px 0',
             background: theme.colors.keepLight,
-            borderRadius: theme.radius.md,
-            textAlign: 'center',
+            border: 'none',
+            borderRadius: theme.radius.lg,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
           }}
         >
-          <span
-            style={{
-              color: theme.colors.keep,
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: 0.5,
-            }}
-          >
+          <span style={{ color: theme.colors.keep, fontSize: 15, fontWeight: 800, letterSpacing: 0.5 }}>
             KEEP →
           </span>
-        </div>
+        </button>
       </div>
-
-      <p
-        style={{
-          textAlign: 'center',
-          color: theme.colors.muted,
-          fontSize: 12,
-          marginTop: 8,
-          marginBottom: 0,
-        }}
-      >
-        Drag card or use ← → arrow keys · Ctrl+Z to undo
-      </p>
 
       {/* Info modal */}
       {infoAsset && (
@@ -358,6 +341,7 @@ function InfoModal({
   asset: MediaAsset;
   onClose: () => void;
 }) {
+  const theme = useTheme();
   const rows: [string, string][] = [
     ['Filename', asset.filename ?? asset.id],
     ['Type', asset.kind === 'photo' ? 'Photo' : 'Video'],
