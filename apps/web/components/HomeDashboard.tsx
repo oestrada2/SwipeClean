@@ -196,34 +196,6 @@ export function HomeDashboard() {
         What do you want to clean?
       </p>
 
-      {/* Quick stats 2×2 grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '0 20px 16px' }}>
-        {([
-          { value: '4,382', label: 'Photos & Videos', accent: theme.colors.primary },
-          { value: '12.4 GB', label: 'Library Size', accent: theme.colors.muted },
-          { value: '342', label: 'To Review', accent: '#F59E0B' },
-          { value: '1.2 GB', label: 'Can Free Up', accent: theme.colors.keep },
-        ] as const).map(({ value, label, accent }) => (
-          <div
-            key={label}
-            style={{
-              background: theme.colors.surface,
-              border: `1px solid ${theme.colors.border}`,
-              borderRadius: 16,
-              padding: '16px 14px 14px',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, opacity: 0.7 }} />
-            <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: theme.colors.text, lineHeight: 1.1 }}>{value}</p>
-            <p style={{ margin: '5px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted, letterSpacing: 0.2 }}>{label}</p>
-          </div>
-        ))}
-      </div>
-
       {/* Media type quick filters — compact row, top-right */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 14px 14px', gap: 6 }}>
         {([
@@ -504,6 +476,34 @@ export function HomeDashboard() {
             · random month
           </span>
         </button>
+      </div>
+
+      {/* Quick stats 2×2 grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '16px 20px 0' }}>
+        {([
+          { value: '4,382', label: 'Photos & Videos', accent: theme.colors.primary },
+          { value: '12.4 GB', label: 'Library Size', accent: theme.colors.muted },
+          { value: '342', label: 'To Review', accent: '#F59E0B' },
+          { value: '1.2 GB', label: 'Can Free Up', accent: theme.colors.keep },
+        ] as const).map(({ value, label, accent }) => (
+          <div
+            key={label}
+            style={{
+              background: theme.colors.surface,
+              border: `1px solid ${theme.colors.border}`,
+              borderRadius: 16,
+              padding: '16px 14px 14px',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, opacity: 0.7 }} />
+            <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: theme.colors.text, lineHeight: 1.1 }}>{value}</p>
+            <p style={{ margin: '5px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted, letterSpacing: 0.2 }}>{label}</p>
+          </div>
+        ))}
       </div>
 
       {reveal && (
