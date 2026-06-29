@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { CleanupSettingsModal } from './CleanupSettingsModal';
 import { useApp, useTheme } from '../lib/context';
 import { getMockAlbums } from '../lib/mockData';
 import type { CleanupCategory } from '../lib/types';
@@ -27,10 +26,9 @@ function getMonthLabel(offset: number): string {
 
 export function HomeDashboard() {
   const theme = useTheme();
-  const { setTab, setCleanupCategory, setCleanupAlbum, cleanupSettings, setCleanupSettings, isPremium } = useApp();
+  const { setTab, setCleanupCategory, setCleanupAlbum, isPremium } = useApp();
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [selectedMediaType, setSelectedMediaType] = useState<'photos-only' | 'videos-only' | null>(null);
   const [reveal, setReveal] = useState<{
     phase: 'spinning' | 'landed';
@@ -177,35 +175,6 @@ export function HomeDashboard() {
           >
             SwipeClean
           </h1>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { icon: '⚙', label: 'Settings', onTap: () => setShowSettings(true) },
-            { icon: '☁', label: 'Storage', onTap: undefined },
-            { icon: '⋯', label: 'More', onTap: undefined },
-          ].map(({ icon, label, onTap }) => (
-            <button
-              key={label}
-              aria-label={label}
-              onClick={onTap}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                background: theme.colors.surfaceOverlay,
-                border: `1px solid ${theme.colors.divider}`,
-                color: theme.colors.textSecondary,
-                fontSize: 17,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'inherit',
-              }}
-            >
-              {icon}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -611,14 +580,6 @@ export function HomeDashboard() {
       )}
 
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
-      {showSettings && (
-        <CleanupSettingsModal
-          settings={cleanupSettings}
-          onApply={setCleanupSettings}
-          onClose={() => setShowSettings(false)}
-          onShowPaywall={() => setShowPaywall(true)}
-        />
-      )}
       {showAlbumPicker && (
         <AlbumPickerModal
           onSelect={handleAlbumSelect}
