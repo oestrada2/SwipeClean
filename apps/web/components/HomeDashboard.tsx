@@ -455,6 +455,43 @@ export function HomeDashboard() {
         ))}
       </div>
 
+      {/* Random month button */}
+      <div style={{ padding: '12px 14px 0' }}>
+        <button
+          onClick={() => {
+            const monthCats = categories.filter((c) => monthIds.has(c.id));
+            const pick = monthCats[Math.floor(Math.random() * monthCats.length)];
+            if (pick) handleTap(pick);
+          }}
+          style={{
+            width: '100%',
+            padding: '15px 20px',
+            background: theme.colors.surface,
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: 18,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            transition: 'filter 0.12s ease',
+          }}
+          onPointerEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.15)'; }}
+          onPointerLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = ''; }}
+        >
+          <span style={{ fontSize: 20 }}>🎲</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: theme.colors.text }}>
+            Surprise Me
+          </span>
+          <span style={{ fontSize: 13, color: theme.colors.muted, fontWeight: 500 }}>
+            random month
+          </span>
+        </button>
+      </div>
+
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
       {showSettings && (
         <CleanupSettingsModal
