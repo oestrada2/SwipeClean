@@ -224,25 +224,27 @@ export function HomeDashboard() {
       {/* Quick stats 2×2 grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '0 20px 16px' }}>
         {([
-          { value: '4,382', label: 'Photos & Videos', gradient: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)' },
-          { value: '12.4 GB', label: 'Library Size',   gradient: 'linear-gradient(135deg, #6366F1 0%, #C026D3 100%)' },
-          { value: '342',     label: 'To Review',       gradient: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)' },
-          { value: '1.2 GB', label: 'Can Free Up',     gradient: 'linear-gradient(135deg, #A855F7 0%, #F43F5E 100%)' },
-        ] as const).map(({ value, label, gradient }) => (
+          { value: '4,382', label: 'Photos & Videos', accent: theme.colors.primary },
+          { value: '12.4 GB', label: 'Library Size', accent: theme.colors.muted },
+          { value: '342', label: 'To Review', accent: '#F59E0B' },
+          { value: '1.2 GB', label: 'Can Free Up', accent: theme.colors.keep },
+        ] as const).map(({ value, label, accent }) => (
           <div
             key={label}
             style={{
-              background: gradient,
+              background: theme.colors.surface,
+              border: `1px solid ${theme.colors.border}`,
               borderRadius: 16,
               padding: '16px 14px 14px',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
             }}
           >
-            <div style={{ position:'absolute', inset:0, background:'linear-gradient(140deg,rgba(255,255,255,0.18) 0%,transparent 55%)', pointerEvents:'none' }} />
-            <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#fff', lineHeight: 1.1, position:'relative', textShadow:'0 1px 4px rgba(0,0,0,0.2)' }}>{value}</p>
-            <p style={{ margin: '5px 0 0', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.7)', letterSpacing: 0.2, position:'relative' }}>{label}</p>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, opacity: 0.7 }} />
+            <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: theme.colors.text, lineHeight: 1.1 }}>{value}</p>
+            <p style={{ margin: '5px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted, letterSpacing: 0.2 }}>{label}</p>
           </div>
         ))}
       </div>
