@@ -159,6 +159,7 @@ function WelcomeStep() {
           objectFit: 'contain',
           margin: '0 auto 24px',
           display: 'block',
+          mixBlendMode: 'screen',
           filter: 'drop-shadow(0 8px 32px rgba(124,58,237,0.55))',
         }}
       />

@@ -157,7 +157,7 @@ export function HomeDashboard() {
           <img
             src="/app-icon.png"
             alt=""
-            style={{ width: 36, height: 36, objectFit: 'contain' }}
+            style={{ width: 36, height: 36, objectFit: 'contain', mixBlendMode: theme.colors.background === '#050505' ? 'screen' : 'multiply' }}
           />
           <h1
             style={{
