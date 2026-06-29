@@ -193,7 +193,7 @@ export function HomeDashboard() {
 
       <p
         style={{
-          margin: '0 20px 20px',
+          margin: '0 20px 16px',
           color: theme.colors.muted,
           fontSize: 14,
           fontWeight: 500,
@@ -202,6 +202,29 @@ export function HomeDashboard() {
       >
         What do you want to clean?
       </p>
+
+      {/* Quick stats 2×2 grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '0 20px 16px' }}>
+        {([
+          { value: '4,382', label: 'Photos & Videos' },
+          { value: '12.4 GB', label: 'Library Size' },
+          { value: '342', label: 'To Review' },
+          { value: '1.2 GB', label: 'Can Free Up' },
+        ] as const).map(({ value, label }) => (
+          <div
+            key={label}
+            style={{
+              background: theme.colors.surface,
+              border: `1px solid ${theme.colors.border}`,
+              borderRadius: 14,
+              padding: '14px 12px',
+            }}
+          >
+            <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: theme.colors.text, lineHeight: 1.1 }}>{value}</p>
+            <p style={{ margin: '4px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted }}>{label}</p>
+          </div>
+        ))}
+      </div>
 
       {/* Media type quick filters — compact row, top-right */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 14px 14px', gap: 6 }}>
@@ -500,6 +523,13 @@ function AlbumPickerModal({
 
 function PremiumModal({ onClose }: { onClose: () => void }) {
   const theme = useTheme();
+  const [plan, setPlan] = useState<'monthly' | 'annual'>('annual');
+
+  const pricing = {
+    monthly: { price: '$4.99', period: '/month', note: 'Billed monthly' },
+    annual: { price: '$2.99', period: '/month', note: 'Billed $35.99/year · Save 40%' },
+  };
+
   return (
     <div
       style={{
@@ -518,7 +548,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
         style={{
           background: theme.colors.surface,
           borderRadius: '24px 24px 0 0',
-          padding: '32px 24px 36px',
+          padding: '28px 24px 32px',
           width: '100%',
           maxWidth: 480,
           textAlign: 'center',
@@ -531,49 +561,109 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
             height: 4,
             background: theme.colors.chevron,
             borderRadius: 99,
-            margin: '0 auto 24px',
+            margin: '0 auto 20px',
           }}
         />
-        <span style={{ fontSize: 52 }}>✨</span>
-        <h3 style={{ margin: '12px 0 8px', fontSize: 26, fontWeight: 900, color: theme.colors.text }}>
+        <span style={{ fontSize: 48 }}>✨</span>
+        <h3 style={{ margin: '10px 0 6px', fontSize: 24, fontWeight: 900, color: theme.colors.text }}>
           SwipeClean Pro
         </h3>
-        <p
+        <p style={{ color: theme.colors.muted, fontSize: 14, lineHeight: 1.55, margin: '0 0 22px' }}>
+          Smart Cleanup, Large Videos, duplicate detection, blurry photo finder, and AI suggestions.
+        </p>
+
+        {/* Plan toggle */}
+        <div
           style={{
-            color: theme.colors.muted,
-            fontSize: 15,
-            lineHeight: 1.55,
-            margin: '0 0 28px',
+            display: 'flex',
+            background: theme.colors.inputBackground,
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: 14,
+            padding: 4,
+            marginBottom: 16,
           }}
         >
-          Smart Cleanup, Large Videos, duplicate detection, blurry photo finder, and AI
-          suggestions are Pro features.
-        </p>
+          {(['monthly', 'annual'] as const).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPlan(p)}
+              style={{
+                flex: 1,
+                padding: '10px 0',
+                background: plan === p ? theme.colors.primary : 'transparent',
+                border: 'none',
+                borderRadius: 11,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: 14,
+                fontWeight: 700,
+                color: plan === p ? '#fff' : theme.colors.muted,
+                transition: 'background 0.18s ease, color 0.18s ease',
+                position: 'relative',
+              }}
+            >
+              {p === 'annual' ? 'Annual' : 'Monthly'}
+              {p === 'annual' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -8,
+                    right: 10,
+                    background: '#F59E0B',
+                    color: '#fff',
+                    fontSize: 9,
+                    fontWeight: 900,
+                    letterSpacing: 0.8,
+                    padding: '2px 6px',
+                    borderRadius: 99,
+                  }}
+                >
+                  SAVE 40%
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Price display */}
+        <div style={{ marginBottom: 22 }}>
+          <span style={{ fontSize: 38, fontWeight: 900, color: theme.colors.text }}>
+            {pricing[plan].price}
+          </span>
+          <span style={{ fontSize: 16, color: theme.colors.muted, fontWeight: 500 }}>
+            {pricing[plan].period}
+          </span>
+          <p style={{ margin: '4px 0 0', fontSize: 12, color: theme.colors.muted }}>
+            {pricing[plan].note}
+          </p>
+        </div>
+
         <button
           style={{
             width: '100%',
             padding: '16px',
             background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
             border: 'none',
-            borderRadius: theme.radius.md,
+            borderRadius: 99,
             fontSize: 17,
             fontWeight: 900,
             color: '#fff',
             cursor: 'pointer',
             fontFamily: 'inherit',
             marginBottom: 10,
+            boxShadow: '0 4px 20px rgba(245,158,11,0.4)',
           }}
           onClick={onClose}
         >
-          Upgrade to Pro
+          Start Free Trial
         </button>
         <button
           style={{
             width: '100%',
-            padding: '14px',
+            padding: '12px',
             background: 'none',
             border: 'none',
-            fontSize: 15,
+            fontSize: 14,
             fontWeight: 600,
             color: theme.colors.muted,
             cursor: 'pointer',

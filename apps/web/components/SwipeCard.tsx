@@ -173,9 +173,9 @@ export function SwipeCard({ asset, onSwipeLeft, onSwipeRight, onInfo }: Props) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '12px 16px',
+          padding: '48px 16px 18px',
           background:
-            'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)',
+            'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)',
         }}
       >
         <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}>

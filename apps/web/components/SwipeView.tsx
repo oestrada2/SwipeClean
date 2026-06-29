@@ -296,33 +296,43 @@ export function SwipeView() {
           onClick={handleSwipeLeft}
           style={{
             flex: 1,
-            padding: '16px 0',
-            background: theme.colors.deleteLight,
+            padding: '15px 0',
+            background: theme.colors.delete,
             border: 'none',
             borderRadius: theme.radius.lg,
             cursor: 'pointer',
             fontFamily: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
           }}
         >
-          <span style={{ color: theme.colors.delete, fontSize: 15, fontWeight: 800, letterSpacing: 0.5 }}>
-            ← DELETE
+          <span style={{ color: '#fff', fontSize: 18, lineHeight: 1 }}>✕</span>
+          <span style={{ color: '#fff', fontSize: 15, fontWeight: 800, letterSpacing: 0.8 }}>
+            DELETE
           </span>
         </button>
         <button
           onClick={handleSwipeRight}
           style={{
             flex: 1,
-            padding: '16px 0',
-            background: theme.colors.keepLight,
+            padding: '15px 0',
+            background: theme.colors.keep,
             border: 'none',
             borderRadius: theme.radius.lg,
             cursor: 'pointer',
             fontFamily: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
           }}
         >
-          <span style={{ color: theme.colors.keep, fontSize: 15, fontWeight: 800, letterSpacing: 0.5 }}>
-            KEEP →
+          <span style={{ color: '#fff', fontSize: 15, fontWeight: 800, letterSpacing: 0.8 }}>
+            KEEP
           </span>
+          <span style={{ color: '#fff', fontSize: 18, lineHeight: 1 }}>✓</span>
         </button>
       </div>
 

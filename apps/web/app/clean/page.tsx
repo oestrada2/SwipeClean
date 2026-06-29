@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { CleanupSettingsModal } from '../../components/CleanupSettingsModal';
 import { DeleteBinView } from '../../components/DeleteBinView';
 import { HistoryView } from '../../components/HistoryView';
@@ -9,10 +10,48 @@ import { SwipeView } from '../../components/SwipeView';
 import { AppProvider, useApp, useTheme } from '../../lib/context';
 import type { Tab } from '../../lib/types';
 
-const TABS: Array<{ id: Tab; label: string; icon: string }> = [
-  { id: 'home', label: 'Home', icon: '🏠' },
-  { id: 'bin', label: 'Bin', icon: '🗑' },
-  { id: 'history', label: 'History', icon: '📋' },
+function IconHome() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+    </svg>
+  );
+}
+
+function IconClock() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <polyline points="12 7 12 12 15 15"/>
+    </svg>
+  );
+}
+
+function IconSettings() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  );
+}
+
+const TABS: Array<{ id: Tab; label: string; icon: ReactNode }> = [
+  { id: 'home', label: 'Home', icon: <IconHome /> },
+  { id: 'bin', label: 'Bin', icon: <IconTrash /> },
+  { id: 'history', label: 'History', icon: <IconClock /> },
 ];
 
 function AppShell() {
@@ -89,7 +128,7 @@ function AppShell() {
                 position: 'relative',
               }}
             >
-              <span style={{ fontSize: 22 }}>{tab.icon}</span>
+              {tab.icon}
               <span style={{ fontSize: 11, fontWeight: 600 }}>{tab.label}</span>
               {binBadge && (
                 <span
@@ -135,7 +174,7 @@ function AppShell() {
             fontFamily: 'inherit',
           }}
         >
-          <span style={{ fontSize: 22 }}>⚙️</span>
+          <IconSettings />
           <span style={{ fontSize: 11, fontWeight: 600 }}>Settings</span>
         </button>
       </nav>
