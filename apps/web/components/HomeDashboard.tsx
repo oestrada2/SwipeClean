@@ -483,7 +483,10 @@ export function HomeDashboard() {
       </div>
 
       {/* Quick stats 2×2 grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '16px 20px 0' }}>
+      <p style={{ margin: '18px 20px 10px', color: theme.colors.muted, fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+        Your Library
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '0 20px 0' }}>
         {([
           { value: '4,382', label: 'Photos & Videos', accent: theme.colors.primary },
           { value: '12.4 GB', label: 'Library Size', accent: theme.colors.muted },
