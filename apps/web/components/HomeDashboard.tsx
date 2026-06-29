@@ -491,7 +491,7 @@ export function HomeDashboard() {
           style={{
             width: '100%',
             padding: '17px 20px',
-            background: 'linear-gradient(110deg, #8B5CF6 0%, #EC4899 45%, #F59E0B 100%)',
+            background: 'linear-gradient(110deg, #62CFF4 0%, #FF00FF 100%)',
             border: 'none',
             borderRadius: 18,
             cursor: 'pointer',
@@ -500,7 +500,7 @@ export function HomeDashboard() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 10,
-            boxShadow: '0 6px 28px rgba(139,92,246,0.45)',
+            boxShadow: '0 6px 28px rgba(255,0,255,0.35)',
             transition: 'filter 0.12s ease, transform 0.12s ease',
             position: 'relative',
             overflow: 'hidden',
