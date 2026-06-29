@@ -5,6 +5,8 @@ import { useApp, useTheme } from '../lib/context';
 import { getMockAlbums } from '../lib/mockData';
 import type { CleanupCategory } from '../lib/types';
 
+type MonthSort = 'newest' | 'oldest' | 'most-photos' | 'fewest-photos' | 'most-storage';
+
 type CategoryDef = {
   id: CleanupCategory;
   label: string;
@@ -14,7 +16,12 @@ type CategoryDef = {
   isPremiumOnly?: boolean;
   height?: number;
   colSpan?: 2;
+  meta?: { count: number; storageMb: number };
 };
+
+function fmtStorage(mb: number) {
+  return mb >= 1000 ? `${(mb / 1000).toFixed(1)} GB` : `${mb} MB`;
+}
 
 function getMonthLabel(offset: number): string {
   const d = new Date();
@@ -32,6 +39,8 @@ export function HomeDashboard() {
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedMediaType, setSelectedMediaType] = useState<'photos-only' | 'videos-only' | null>(null);
+  const [monthSort, setMonthSort] = useState<MonthSort>('newest');
+  const [showSortSheet, setShowSortSheet] = useState(false);
   const [reveal, setReveal] = useState<{
     phase: 'spinning' | 'landed';
     target: CategoryDef;
@@ -104,24 +113,28 @@ export function HomeDashboard() {
       label: getMonthLabel(0),
       gradient: 'linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%)',
       height: 92,
+      meta: { count: 284, storageMb: 2150 },
     },
     {
       id: 'month-1',
       label: getMonthLabel(1),
       gradient: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
       height: 92,
+      meta: { count: 156, storageMb: 890 },
     },
     {
       id: 'month-2',
       label: getMonthLabel(2),
       gradient: 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
       height: 92,
+      meta: { count: 412, storageMb: 3400 },
     },
     {
       id: 'month-3',
       label: getMonthLabel(3),
       gradient: 'linear-gradient(135deg, #84CC16 0%, #A3E635 100%)',
       height: 92,
+      meta: { count: 98, storageMb: 640 },
     },
   ];
 
@@ -247,61 +260,6 @@ export function HomeDashboard() {
         ))}
       </div>
 
-      {/* Media type quick filters — compact row, top-right */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 14px 14px', gap: 6 }}>
-        {([
-          { id: 'photos-only' as const, icon: '📷', label: 'photos' },
-          { id: 'videos-only' as const, icon: '🎥', label: 'videos' },
-        ]).map(({ id, icon, label }) => {
-          const checked = selectedMediaType === id;
-          return (
-            <button
-              key={id}
-              onClick={() => {
-                const next = selectedMediaType === id ? null : id;
-                setSelectedMediaType(next);
-                if (next) { setCleanupAlbum(null); setCleanupCategory(next); setTab('swipe'); }
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 10px',
-                background: checked ? theme.colors.primaryLight : theme.colors.inputBackground,
-                border: `1px solid ${checked ? theme.colors.primary : theme.colors.border}`,
-                borderRadius: 8,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              <span
-                style={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: 3,
-                  border: `1.5px solid ${checked ? theme.colors.primary : theme.colors.chevron}`,
-                  background: checked ? theme.colors.primary : 'transparent',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                {checked && (
-                  <svg width="8" height="7" viewBox="0 0 8 7" fill="none">
-                    <path d="M1 3L3 5.5L7 1" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </span>
-              <span style={{ fontSize: 12 }}>{icon}</span>
-              <span style={{ color: checked ? theme.colors.text : theme.colors.textSecondary, fontSize: 12, fontWeight: 600 }}>
-                {label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
       {/* Bento grid — main categories */}
       <div style={{ padding: '0 14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {categories.filter((c) => !monthIds.has(c.id)).map((cat) => (
@@ -403,18 +361,41 @@ export function HomeDashboard() {
       </div>
 
       {/* Month archive — 2×2 grid */}
-      <p style={{
-        margin: '18px 20px 10px',
-        color: theme.colors.muted,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 1.2,
-        textTransform: 'uppercase',
-      }}>
-        By Month
-      </p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '18px 20px 10px' }}>
+        <p style={{ margin: 0, color: theme.colors.muted, fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase' }}>
+          By Month
+        </p>
+        <button
+          onClick={() => setShowSortSheet(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: theme.colors.inputBackground,
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: 99,
+            padding: '5px 11px 5px 8px',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={theme.colors.textSecondary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/>
+          </svg>
+          <span style={{ fontSize: 12, fontWeight: 600, color: theme.colors.textSecondary }}>
+            {{ newest: 'Newest', oldest: 'Oldest', 'most-photos': 'Most Photos', 'fewest-photos': 'Fewest Photos', 'most-storage': 'Most Storage' }[monthSort]}
+          </span>
+        </button>
+      </div>
       <div style={{ padding: '0 14px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        {categories.filter((c) => monthIds.has(c.id)).map((cat) => (
+        {((): CategoryDef[] => {
+          const months = categories.filter((c) => monthIds.has(c.id));
+          switch (monthSort) {
+            case 'oldest':       return [...months].reverse();
+            case 'most-photos':  return [...months].sort((a, b) => (b.meta?.count ?? 0) - (a.meta?.count ?? 0));
+            case 'fewest-photos':return [...months].sort((a, b) => (a.meta?.count ?? 0) - (b.meta?.count ?? 0));
+            case 'most-storage': return [...months].sort((a, b) => (b.meta?.storageMb ?? 0) - (a.meta?.storageMb ?? 0));
+            default:             return months;
+          }
+        })().map((cat) => (
           <button
             key={cat.id}
             onClick={() => handleTap(cat)}
@@ -433,28 +414,24 @@ export function HomeDashboard() {
               padding: '0 18px',
               fontFamily: 'inherit',
               transition: 'filter 0.12s ease',
+              gap: 3,
             }}
             onPointerEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.08)'; }}
             onPointerLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = ''; }}
           >
             <div style={{
-              position: 'absolute',
-              inset: 0,
+              position: 'absolute', inset: 0,
               background: 'linear-gradient(140deg, rgba(255,255,255,0.18) 0%, transparent 50%)',
-              borderRadius: 'inherit',
-              pointerEvents: 'none',
+              borderRadius: 'inherit', pointerEvents: 'none',
             }} />
-            <span style={{
-              color: '#fff',
-              fontSize: 22,
-              fontWeight: 900,
-              letterSpacing: -0.8,
-              lineHeight: 1,
-              position: 'relative',
-              textShadow: '0 1px 6px rgba(0,0,0,0.2)',
-            }}>
+            <span style={{ color: '#fff', fontSize: 20, fontWeight: 900, letterSpacing: -0.8, lineHeight: 1, position: 'relative', textShadow: '0 1px 6px rgba(0,0,0,0.2)' }}>
               {cat.label}
             </span>
+            {cat.meta && (
+              <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: 600, position: 'relative', letterSpacing: 0.1 }}>
+                {cat.meta.count} photos · {fmtStorage(cat.meta.storageMb)}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -606,6 +583,54 @@ export function HomeDashboard() {
             )}
           </div>
         </>
+      )}
+
+      {showSortSheet && (
+        <div
+          style={{ position:'fixed', inset:0, background: theme.colors.overlay, display:'flex', alignItems:'flex-end', justifyContent:'center', zIndex:200, paddingBottom:72 }}
+          onClick={() => setShowSortSheet(false)}
+        >
+          <div
+            style={{ background: theme.colors.modal, borderRadius:'24px 24px 0 0', width:'100%', maxWidth:480, padding:'20px 16px 28px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ width:40, height:4, background: theme.colors.chevron, borderRadius:99, margin:'0 auto 20px' }} />
+            <p style={{ margin:'0 0 14px 8px', fontSize:11, fontWeight:700, letterSpacing:1.5, textTransform:'uppercase', color: theme.colors.muted }}>Sort by</p>
+            {([
+              { id: 'newest'        as MonthSort, label: 'Newest First',   sub: 'Most recent month at top',       icon: '🕐' },
+              { id: 'oldest'        as MonthSort, label: 'Oldest First',   sub: 'Oldest month at top',            icon: '📅' },
+              { id: 'most-photos'   as MonthSort, label: 'Most Photos',    sub: 'Months with most items first',   icon: '📸' },
+              { id: 'fewest-photos' as MonthSort, label: 'Fewest Photos',  sub: 'Quickest to clean first',        icon: '✅' },
+              { id: 'most-storage'  as MonthSort, label: 'Most Storage',   sub: 'Biggest space savings first',    icon: '💾' },
+            ]).map(({ id, label, sub, icon }) => {
+              const active = monthSort === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => { setMonthSort(id); setShowSortSheet(false); }}
+                  style={{
+                    display:'flex', alignItems:'center', width:'100%',
+                    padding:'12px 14px', marginBottom:6,
+                    background: active ? theme.colors.primaryLight : theme.colors.inputBackground,
+                    border: `1px solid ${active ? theme.colors.primary : theme.colors.divider}`,
+                    borderRadius:14, cursor:'pointer', fontFamily:'inherit', textAlign:'left', gap:12,
+                  }}
+                >
+                  <span style={{ fontSize:22 }}>{icon}</span>
+                  <span style={{ flex:1 }}>
+                    <span style={{ display:'block', fontSize:15, fontWeight:700, color: theme.colors.text }}>{label}</span>
+                    <span style={{ display:'block', fontSize:12, color: theme.colors.muted, marginTop:1 }}>{sub}</span>
+                  </span>
+                  {active && (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={theme.colors.primary} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
