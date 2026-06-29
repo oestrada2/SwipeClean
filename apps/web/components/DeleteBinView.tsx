@@ -601,7 +601,7 @@ function ConfirmModal({
     >
       <div
         style={{
-          background: theme.colors.surface,
+          background: theme.colors.modal,
           borderRadius: theme.radius.xl,
           padding: 24,
           width: '100%',

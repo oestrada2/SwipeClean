@@ -290,7 +290,7 @@ function ProtectedAlbumsModal({
     >
       <div
         style={{
-          background: theme.colors.surface,
+          background: theme.colors.modal,
           borderRadius: '24px 24px 0 0',
           width: '100%',
           maxWidth: 480,
@@ -434,7 +434,7 @@ function NotificationsModal({
     >
       <div
         style={{
-          background: theme.colors.surface,
+          background: theme.colors.modal,
           borderRadius: '24px 24px 0 0',
           width: '100%',
           maxWidth: 480,
@@ -603,7 +603,7 @@ export function CleanupSettingsModal({
       >
         <div
           style={{
-            background: theme.colors.surface,
+            background: theme.colors.modal,
             borderRadius: '24px 24px 0 0',
             width: '100%',
             maxWidth: 480,
