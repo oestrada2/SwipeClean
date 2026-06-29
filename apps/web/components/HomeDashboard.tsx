@@ -32,6 +32,12 @@ export function HomeDashboard() {
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedMediaType, setSelectedMediaType] = useState<'photos-only' | 'videos-only' | null>(null);
+  const [reveal, setReveal] = useState<{
+    phase: 'spinning' | 'landed';
+    target: CategoryDef;
+    display: string;
+    tickKey: number;
+  } | null>(null);
 
   const categories: CategoryDef[] = [
     {
@@ -461,7 +467,28 @@ export function HomeDashboard() {
           onClick={() => {
             const monthCats = categories.filter((c) => monthIds.has(c.id));
             const pick = monthCats[Math.floor(Math.random() * monthCats.length)];
-            if (pick) handleTap(pick);
+            if (!pick) return;
+
+            setReveal({ phase: 'spinning', target: pick, display: monthCats[0].label, tickKey: 0 });
+
+            let tick = 0;
+            const labels = monthCats.map((c) => c.label);
+
+            function spin() {
+              tick++;
+              const delay = tick < 10 ? 70 : tick < 15 ? 130 : tick < 18 ? 220 : 340;
+              if (tick < 21) {
+                setReveal((prev) => prev ? { ...prev, display: labels[tick % labels.length], tickKey: tick } : null);
+                setTimeout(spin, delay);
+              } else {
+                setReveal((prev) => prev ? { ...prev, phase: 'landed', display: pick.label, tickKey: tick } : null);
+                setTimeout(() => {
+                  setReveal(null);
+                  handleTap(pick);
+                }, 1100);
+              }
+            }
+            setTimeout(spin, 70);
           }}
           style={{
             width: '100%',
@@ -491,6 +518,86 @@ export function HomeDashboard() {
           </span>
         </button>
       </div>
+
+      {reveal && (
+        <>
+          <style>{`
+            @keyframes sc-roll { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+            @keyframes sc-land { 0%{transform:scale(0.72);opacity:0} 65%{transform:scale(1.07)} 100%{transform:scale(1);opacity:1} }
+            @keyframes sc-confetti { 0%{opacity:0;transform:scale(0.3) rotate(0deg)} 40%{opacity:1} 100%{opacity:0;transform:scale(2.2) rotate(25deg)} }
+            @keyframes sc-in { from{opacity:0} to{opacity:1} }
+          `}</style>
+          <div
+            style={{
+              position: 'fixed', inset: 0, zIndex: 300,
+              background: 'rgba(0,0,0,0.92)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: 'sc-in 0.18s ease both',
+            }}
+          >
+            {reveal.phase === 'spinning' ? (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 56, marginBottom: 20, lineHeight: 1 }}>🎲</div>
+                <div style={{
+                  width: 280, height: 110,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 24,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  overflow: 'hidden', position: 'relative',
+                }}>
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:32, background:'linear-gradient(to bottom,rgba(0,0,0,0.7),transparent)', pointerEvents:'none', zIndex:1 }} />
+                  <div style={{ position:'absolute', bottom:0, left:0, right:0, height:32, background:'linear-gradient(to top,rgba(0,0,0,0.7),transparent)', pointerEvents:'none', zIndex:1 }} />
+                  <span
+                    key={reveal.tickKey}
+                    style={{ fontSize: 38, fontWeight: 900, color: '#fff', letterSpacing: -1, animation: 'sc-roll 0.11s ease both' }}
+                  >
+                    {reveal.display}
+                  </span>
+                </div>
+                <p style={{ margin: '14px 0 0', color: 'rgba(255,255,255,0.3)', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase' }}>
+                  Picking...
+                </p>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', position: 'relative' }}>
+                {(['✨','🎉','⭐','💫','🌟'] as const).map((emoji, i) => (
+                  <span key={i} style={{
+                    position: 'absolute', fontSize: 30, pointerEvents: 'none',
+                    animation: `sc-confetti 0.95s ease ${i * 0.08}s both`,
+                    top: `${([-70, -45, -25, 15, -60] as number[])[i]}px`,
+                    left: `${([-90, 125, -120, 105, -25] as number[])[i]}px`,
+                  }}>
+                    {emoji}
+                  </span>
+                ))}
+                <div style={{
+                  width: 280,
+                  background: reveal.target.gradient,
+                  borderRadius: 28,
+                  padding: '36px 28px',
+                  animation: 'sc-land 0.45s cubic-bezier(0.34,1.56,0.64,1) both',
+                  boxShadow: '0 24px 64px rgba(0,0,0,0.55)',
+                  position: 'relative', overflow: 'hidden',
+                }}>
+                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(140deg,rgba(255,255,255,0.22) 0%,transparent 55%)', pointerEvents:'none' }} />
+                  <p style={{ margin:'0 0 8px', color:'rgba(255,255,255,0.65)', fontSize:11, fontWeight:700, letterSpacing:2.5, textTransform:'uppercase' }}>
+                    This month
+                  </p>
+                  <p style={{ margin:0, color:'#fff', fontSize:44, fontWeight:900, letterSpacing:-1.5, lineHeight:1 }}>
+                    {reveal.display}
+                  </p>
+                </div>
+                <p style={{ margin:'18px 0 0', color:'rgba(255,255,255,0.35)', fontSize:13, fontWeight:600, letterSpacing:0.2 }}>
+                  Let's clean it up...
+                </p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
       {showSettings && (
