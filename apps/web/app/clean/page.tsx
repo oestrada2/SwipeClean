@@ -226,6 +226,7 @@ function AppShell() {
           onApply={setCleanupSettings}
           onClose={() => setShowSettings(false)}
           onShowPaywall={() => setShowSettings(false)}
+          onResetOnboarding={() => { setShowSettings(false); setShowOnboarding(true); }}
         />
       )}
 

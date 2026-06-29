@@ -553,11 +553,13 @@ export function CleanupSettingsModal({
   onApply,
   onClose,
   onShowPaywall,
+  onResetOnboarding,
 }: {
   settings: CleanupSettings;
   onApply: (s: CleanupSettings) => void;
   onClose: () => void;
   onShowPaywall: () => void;
+  onResetOnboarding?: () => void;
 }) {
   const theme = useTheme();
   const [draft, setDraft] = useState<CleanupSettings>({
@@ -785,6 +787,35 @@ export function CleanupSettingsModal({
             {/* Help */}
             <SectionLabel>Help</SectionLabel>
             <NavRow label="Replay Tutorial" sub="Watch the onboarding again" onPress={() => {}} />
+
+            {/* Dev tools */}
+            {onResetOnboarding && (
+              <>
+                <SectionLabel>Developer</SectionLabel>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem('swipeclean_onboarded');
+                    onResetOnboarding();
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    marginTop: 4,
+                    background: 'rgba(239,68,68,0.08)',
+                    border: '1px dashed rgba(239,68,68,0.35)',
+                    borderRadius: 10,
+                    color: '#EF4444',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    textAlign: 'left',
+                  }}
+                >
+                  🔁 Reset Onboarding
+                </button>
+              </>
+            )}
 
             <div style={{ height: 16 }} />
           </div>
