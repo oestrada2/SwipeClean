@@ -186,15 +186,11 @@ export function HomeDashboard() {
 
       <p
         style={{
-          margin: '0 20px 20px',
-          fontSize: 22,
-          fontWeight: 800,
-          letterSpacing: -0.4,
-          lineHeight: 1.2,
-          background: `linear-gradient(90deg, ${theme.colors.text} 0%, ${theme.colors.muted} 100%)`,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
+          margin: '2px 20px 20px',
+          fontSize: 15,
+          fontWeight: 500,
+          letterSpacing: 0.1,
+          color: theme.colors.muted,
         }}
       >
         What do you want to clean?
