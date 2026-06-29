@@ -180,9 +180,7 @@ export function HomeDashboard() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={theme.colors.textSecondary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/>
           </svg>
-          <span style={{ fontSize: 13, fontWeight: 600, color: theme.colors.textSecondary }}>
-            {{ newest: 'Newest', oldest: 'Oldest', 'most-photos': 'Most Photos', 'fewest-photos': 'Fewest Photos', 'most-storage': 'Most Storage' }[monthSort]}
-          </span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: theme.colors.textSecondary }}>Sort</span>
         </button>
       </div>
 
