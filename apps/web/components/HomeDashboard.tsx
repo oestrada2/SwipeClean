@@ -492,9 +492,9 @@ export function HomeDashboard() {
           }}
           style={{
             width: '100%',
-            padding: '15px 20px',
-            background: theme.colors.surface,
-            border: `1px solid ${theme.colors.border}`,
+            padding: '17px 20px',
+            background: 'linear-gradient(110deg, #8B5CF6 0%, #EC4899 45%, #F59E0B 100%)',
+            border: 'none',
             borderRadius: 18,
             cursor: 'pointer',
             fontFamily: 'inherit',
@@ -502,19 +502,30 @@ export function HomeDashboard() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 10,
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            transition: 'filter 0.12s ease',
+            boxShadow: '0 6px 28px rgba(139,92,246,0.45)',
+            transition: 'filter 0.12s ease, transform 0.12s ease',
+            position: 'relative',
+            overflow: 'hidden',
           }}
-          onPointerEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.15)'; }}
-          onPointerLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = ''; }}
+          onPointerEnter={(e) => {
+            const b = e.currentTarget as HTMLButtonElement;
+            b.style.filter = 'brightness(1.12)';
+            b.style.transform = 'scale(1.02)';
+          }}
+          onPointerLeave={(e) => {
+            const b = e.currentTarget as HTMLButtonElement;
+            b.style.filter = '';
+            b.style.transform = '';
+          }}
         >
-          <span style={{ fontSize: 20 }}>🎲</span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: theme.colors.text }}>
+          {/* Glass sheen */}
+          <div style={{ position:'absolute', inset:0, background:'linear-gradient(140deg,rgba(255,255,255,0.22) 0%,transparent 55%)', pointerEvents:'none' }} />
+          <span style={{ fontSize: 22, position: 'relative' }}>🎲</span>
+          <span style={{ fontSize: 16, fontWeight: 900, color: '#fff', letterSpacing: -0.3, position: 'relative', textShadow: '0 1px 6px rgba(0,0,0,0.2)' }}>
             Surprise Me
           </span>
-          <span style={{ fontSize: 13, color: theme.colors.muted, fontWeight: 500 }}>
-            random month
+          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', fontWeight: 600, position: 'relative' }}>
+            · random month
           </span>
         </button>
       </div>
