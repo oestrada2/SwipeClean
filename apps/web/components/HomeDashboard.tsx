@@ -13,6 +13,7 @@ type CategoryDef = {
   icon?: string;
   isPremiumOnly?: boolean;
   height?: number;
+  colSpan?: 2;
 };
 
 function getMonthLabel(offset: number): string {
@@ -37,73 +38,84 @@ export function HomeDashboard() {
       id: 'all-photos',
       label: 'all photos',
       sub: 'Your full library',
-      gradient: 'linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%)',
+      gradient: 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)',
       icon: '🖼',
-      height: 140,
+      height: 176,
+      colSpan: 2,
     },
     {
       id: 'on-this-day',
       label: 'on this day',
-      sub: 'Photos & videos from this date in past years',
-      gradient: 'linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%)',
+      sub: 'From past years',
+      gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
       icon: '📅',
-      height: 140,
+      height: 168,
     },
     {
       id: 'recents',
       label: 'recents',
       sub: 'Last 30 days',
-      gradient: 'linear-gradient(90deg, #10B981 0%, #34D399 100%)',
+      gradient: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
       icon: '🕐',
+      height: 168,
     },
     {
       id: 'screenshots',
       label: 'screenshots',
-      gradient: 'linear-gradient(90deg, #06B6D4 0%, #22D3EE 100%)',
+      gradient: 'linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)',
       icon: '📸',
+      height: 128,
     },
     {
       id: 'large-videos',
       label: 'large videos',
-      gradient: 'linear-gradient(90deg, #6366F1 0%, #818CF8 100%)',
+      gradient: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
       icon: '🎬',
       isPremiumOnly: true,
+      height: 128,
     },
     {
       id: 'albums',
       label: 'albums',
       sub: 'Browse by folder',
-      gradient: 'linear-gradient(90deg, #F97316 0%, #FB923C 100%)',
+      gradient: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)',
       icon: '📁',
+      height: 120,
+      colSpan: 2,
     },
     {
       id: 'smart-cleanup',
       label: 'smart cleanup',
-      sub: 'Duplicates · Blurry Shots · AI Picks',
-      gradient: 'linear-gradient(90deg, #EF4444 0%, #F87171 100%)',
+      sub: 'Duplicates · Blurry · AI Picks',
+      gradient: 'linear-gradient(135deg, #EF4444 0%, #F87171 100%)',
       icon: '✨',
       isPremiumOnly: true,
-      height: 140,
+      height: 156,
+      colSpan: 2,
     },
     {
       id: 'month-0',
       label: getMonthLabel(0),
-      gradient: 'linear-gradient(90deg, #14B8A6 0%, #2DD4BF 100%)',
+      gradient: 'linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%)',
+      height: 92,
     },
     {
       id: 'month-1',
       label: getMonthLabel(1),
-      gradient: 'linear-gradient(90deg, #F59E0B 0%, #FBBF24 100%)',
+      gradient: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+      height: 92,
     },
     {
       id: 'month-2',
       label: getMonthLabel(2),
-      gradient: 'linear-gradient(90deg, #EC4899 0%, #F472B6 100%)',
+      gradient: 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
+      height: 92,
     },
     {
       id: 'month-3',
       label: getMonthLabel(3),
-      gradient: 'linear-gradient(90deg, #84CC16 0%, #A3E635 100%)',
+      gradient: 'linear-gradient(135deg, #84CC16 0%, #A3E635 100%)',
+      height: 92,
     },
   ];
 
@@ -286,115 +298,161 @@ export function HomeDashboard() {
         })}
       </div>
 
-      {/* Category cards */}
-      <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {categories.map((cat) => {
-          const isMonth = monthIds.has(cat.id);
-          return (
-            <button
-              key={cat.id}
-              onClick={() => handleTap(cat)}
-              style={{
-                position: 'relative',
-                width: '100%',
-                minHeight: cat.height ?? 112,
-                background: cat.gradient,
-                border: 'none',
-                borderRadius: 20,
-                cursor: 'pointer',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                alignItems: 'flex-start',
-                padding: '18px 22px',
-                textAlign: 'left',
-                fontFamily: 'inherit',
-              }}
-            >
-              {/* Glass sheen */}
-              <div style={{
+      {/* Bento grid — main categories */}
+      <div style={{ padding: '0 14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        {categories.filter((c) => !monthIds.has(c.id)).map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => handleTap(cat)}
+            style={{
+              gridColumn: cat.colSpan === 2 ? '1 / -1' : undefined,
+              position: 'relative',
+              width: '100%',
+              height: cat.height ?? 128,
+              background: cat.gradient,
+              border: 'none',
+              borderRadius: 22,
+              cursor: 'pointer',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-start',
+              padding: cat.colSpan === 2 ? '20px 24px' : '16px 18px',
+              textAlign: 'left',
+              fontFamily: 'inherit',
+              transition: 'transform 0.12s ease, filter 0.12s ease',
+            }}
+            onPointerEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.08)'; }}
+            onPointerLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = ''; }}
+          >
+            {/* Glass sheen */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(140deg, rgba(255,255,255,0.18) 0%, transparent 50%)',
+              borderRadius: 'inherit',
+              pointerEvents: 'none',
+            }} />
+            {/* Large icon */}
+            {cat.icon && (
+              <span aria-hidden="true" style={{
                 position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%)',
-                borderRadius: 'inherit',
+                right: cat.colSpan === 2 ? 18 : 10,
+                bottom: cat.colSpan === 2 ? 14 : 12,
+                fontSize: cat.colSpan === 2 ? 96 : 64,
+                opacity: 0.18,
+                lineHeight: 1,
                 pointerEvents: 'none',
-              }} />
-              {cat.icon && (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    right: 14,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    fontSize: 78,
-                    opacity: 0.15,
-                    lineHeight: 1,
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                  }}
-                >
-                  {cat.icon}
-                </span>
-              )}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 15,
-                  right: 16,
-                  display: 'flex',
-                  gap: 6,
-                  alignItems: 'center',
-                }}
-              >
-                {cat.isPremiumOnly && (
-                  <span
-                    style={{
-                      background: '#F59E0B',
-                      color: '#fff',
-                      fontSize: 10,
-                      fontWeight: 900,
-                      letterSpacing: 1.5,
-                      padding: '3px 9px',
-                      borderRadius: 6,
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    PRO
-                  </span>
-                )}
-              </div>
-              <span
-                style={{
-                  color: '#fff',
-                  fontSize: 40,
-                  fontWeight: 900,
-                  letterSpacing: isMonth ? -2 : -1,
-                  lineHeight: 1.05,
-                  display: 'block',
-                  textShadow: '0 2px 12px rgba(0,0,0,0.25)',
-                  textTransform: isMonth ? 'none' : 'none',
-                }}
-              >
-                {cat.label}
+                userSelect: 'none',
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))',
+              }}>
+                {cat.icon}
               </span>
-              {cat.sub && (
-                <span
-                  style={{
-                    color: 'rgba(255,255,255,0.6)',
-                    fontSize: 13,
-                    marginTop: 5,
-                    display: 'block',
-                    fontWeight: 500,
-                  }}
-                >
-                  {cat.sub}
-                </span>
-              )}
-            </button>
-          );
-        })}
+            )}
+            {/* PRO badge */}
+            {cat.isPremiumOnly && (
+              <span style={{
+                position: 'absolute',
+                top: 14,
+                right: 14,
+                background: 'rgba(0,0,0,0.3)',
+                backdropFilter: 'blur(8px)',
+                color: '#FCD34D',
+                fontSize: 9,
+                fontWeight: 900,
+                letterSpacing: 1.5,
+                padding: '4px 8px',
+                borderRadius: 99,
+                border: '1px solid rgba(252,211,77,0.3)',
+              }}>
+                PRO
+              </span>
+            )}
+            {/* Label */}
+            <span style={{
+              color: '#fff',
+              fontSize: cat.colSpan === 2 ? 36 : 24,
+              fontWeight: 900,
+              letterSpacing: -0.8,
+              lineHeight: 1.05,
+              display: 'block',
+              textShadow: '0 1px 8px rgba(0,0,0,0.2)',
+              position: 'relative',
+            }}>
+              {cat.label}
+            </span>
+            {cat.sub && (
+              <span style={{
+                color: 'rgba(255,255,255,0.68)',
+                fontSize: 12,
+                marginTop: 4,
+                display: 'block',
+                fontWeight: 500,
+                position: 'relative',
+              }}>
+                {cat.sub}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Month archive — 2×2 grid */}
+      <p style={{
+        margin: '18px 20px 10px',
+        color: theme.colors.muted,
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: 1.2,
+        textTransform: 'uppercase',
+      }}>
+        By Month
+      </p>
+      <div style={{ padding: '0 14px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        {categories.filter((c) => monthIds.has(c.id)).map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => handleTap(cat)}
+            style={{
+              position: 'relative',
+              height: cat.height ?? 92,
+              background: cat.gradient,
+              border: 'none',
+              borderRadius: 18,
+              cursor: 'pointer',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              padding: '0 18px',
+              fontFamily: 'inherit',
+              transition: 'filter 0.12s ease',
+            }}
+            onPointerEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.08)'; }}
+            onPointerLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = ''; }}
+          >
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(140deg, rgba(255,255,255,0.18) 0%, transparent 50%)',
+              borderRadius: 'inherit',
+              pointerEvents: 'none',
+            }} />
+            <span style={{
+              color: '#fff',
+              fontSize: 22,
+              fontWeight: 900,
+              letterSpacing: -0.8,
+              lineHeight: 1,
+              position: 'relative',
+              textShadow: '0 1px 6px rgba(0,0,0,0.2)',
+            }}>
+              {cat.label}
+            </span>
+          </button>
+        ))}
       </div>
 
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
