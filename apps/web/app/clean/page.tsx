@@ -12,7 +12,7 @@ import type { Tab } from '../../lib/types';
 
 function IconHome() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
       <polyline points="9 22 9 12 15 12 15 22"/>
     </svg>
@@ -21,7 +21,7 @@ function IconHome() {
 
 function IconTrash() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6"/>
       <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
       <path d="M10 11v6M14 11v6"/>
@@ -32,7 +32,7 @@ function IconTrash() {
 
 function IconClock() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="9"/>
       <polyline points="12 7 12 12 15 15"/>
     </svg>
@@ -41,7 +41,7 @@ function IconClock() {
 
 function IconSettings() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3"/>
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
@@ -71,10 +71,12 @@ function AppShell() {
     setShowOnboarding(false);
   }
 
+  const isDark = theme.colors.background === '#050505';
+
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background: theme.colors.background,
         display: 'flex',
         flexDirection: 'column',
@@ -88,7 +90,7 @@ function AppShell() {
         {activeTab === 'history' && <HistoryView />}
       </div>
 
-      {/* Bottom tab bar */}
+      {/* Glass bottom tab bar */}
       <nav
         style={{
           position: 'fixed',
@@ -96,12 +98,14 @@ function AppShell() {
           left: 0,
           right: 0,
           height: 72,
-          background: theme.colors.surface,
+          background: isDark ? 'rgba(5,5,5,0.82)' : 'rgba(245,245,247,0.88)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           borderTop: `1px solid ${theme.colors.border}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          padding: '0 8px',
+          padding: '0 4px',
           zIndex: 100,
         }}
       >
@@ -117,6 +121,7 @@ function AppShell() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: 3,
                 background: 'none',
                 border: 'none',
@@ -126,16 +131,33 @@ function AppShell() {
                 color: active ? theme.colors.primary : theme.colors.muted,
                 fontFamily: 'inherit',
                 position: 'relative',
+                minHeight: 56,
+                transition: 'color 0.15s ease',
               }}
             >
-              {tab.icon}
-              <span style={{ fontSize: 11, fontWeight: 600 }}>{tab.label}</span>
+              {active && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 7,
+                    width: 44,
+                    height: 30,
+                    background: theme.colors.primaryLight,
+                    borderRadius: 99,
+                    transition: 'opacity 0.15s ease',
+                  }}
+                />
+              )}
+              <span style={{ position: 'relative', zIndex: 1 }}>{tab.icon}</span>
+              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.2, position: 'relative', zIndex: 1 }}>
+                {tab.label}
+              </span>
               {binBadge && (
                 <span
                   style={{
                     position: 'absolute',
-                    top: 4,
-                    right: '20%',
+                    top: 6,
+                    right: '18%',
                     background: theme.colors.delete,
                     color: '#fff',
                     borderRadius: '50%',
@@ -147,6 +169,7 @@ function AppShell() {
                     justifyContent: 'center',
                     fontWeight: 700,
                     lineHeight: 1,
+                    zIndex: 2,
                   }}
                 >
                   {deleteBin.length > 99 ? '99+' : deleteBin.length}
@@ -164,6 +187,7 @@ function AppShell() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: 3,
             background: 'none',
             border: 'none',
@@ -172,10 +196,27 @@ function AppShell() {
             borderRadius: theme.radius.md,
             color: showSettings ? theme.colors.primary : theme.colors.muted,
             fontFamily: 'inherit',
+            minHeight: 56,
+            position: 'relative',
+            transition: 'color 0.15s ease',
           }}
         >
-          <IconSettings />
-          <span style={{ fontSize: 11, fontWeight: 600 }}>Settings</span>
+          {showSettings && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 7,
+                width: 44,
+                height: 30,
+                background: theme.colors.primaryLight,
+                borderRadius: 99,
+              }}
+            />
+          )}
+          <span style={{ position: 'relative', zIndex: 1 }}><IconSettings /></span>
+          <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.2, position: 'relative', zIndex: 1 }}>
+            Settings
+          </span>
         </button>
       </nav>
 

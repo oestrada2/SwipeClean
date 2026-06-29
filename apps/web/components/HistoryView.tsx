@@ -12,7 +12,7 @@ export function HistoryView() {
 
   if (history.length === 0) {
     return (
-      <div style={{ background: theme.colors.background, minHeight: '100vh' }}>
+      <div style={{ background: theme.colors.background, minHeight: '100dvh' }}>
         <div
           style={{
             padding: '24px 20px 16px',
@@ -47,7 +47,7 @@ export function HistoryView() {
   }
 
   return (
-    <div style={{ background: theme.colors.background, minHeight: '100vh' }}>
+    <div style={{ background: theme.colors.background, minHeight: '100dvh' }}>
       {/* Header */}
       <div
         style={{
@@ -102,10 +102,12 @@ function TotalChip({
       style={{
         flex: 1,
         background: theme.colors.surface,
+        border: `1px solid ${theme.colors.border}`,
         borderRadius: theme.radius.lg,
         padding: 16,
         textAlign: 'center',
-        boxShadow: '0 1px 4px rgba(15,23,42,0.07)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
       }}
     >
       <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color }}>{value}</p>
@@ -133,9 +135,12 @@ function SessionCard({ session }: { session: SessionRecord }) {
     <div
       style={{
         background: theme.colors.surface,
-        borderRadius: theme.radius.lg,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: theme.radius.xl,
         padding: '16px 20px 20px',
         marginBottom: 10,
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
       }}
     >
       {/* Date / time header */}

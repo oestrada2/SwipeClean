@@ -99,7 +99,7 @@ export function DeleteBinView() {
 
   if (deleteBin.length === 0 && !deletionStats) {
     return (
-      <div style={{ background: theme.colors.background, minHeight: '100vh' }}>
+      <div style={{ background: theme.colors.background, minHeight: '100dvh' }}>
         <div
           style={{
             display: 'flex',
@@ -144,7 +144,7 @@ export function DeleteBinView() {
   }
 
   return (
-    <div style={{ background: theme.colors.background, minHeight: '100vh' }}>
+    <div style={{ background: theme.colors.background, minHeight: '100dvh' }}>
       {/* Success banner */}
       {deletionStats && (
         <div
@@ -226,9 +226,11 @@ export function DeleteBinView() {
             justifyContent: 'space-between',
             margin: '12px 16px',
             background: theme.colors.surface,
-            borderRadius: theme.radius.lg,
+            border: `1px solid ${theme.colors.border}`,
+            borderRadius: theme.radius.xl,
             padding: 16,
-            boxShadow: '0 1px 4px rgba(15,23,42,0.07)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
           }}
         >
           <div>
@@ -486,10 +488,12 @@ function BinItem({
         display: 'flex',
         alignItems: 'center',
         background: theme.colors.surface,
-        borderRadius: theme.radius.md,
-        padding: 8,
+        border: `1px solid ${theme.colors.border}`,
+        borderRadius: theme.radius.lg,
+        padding: 10,
         marginBottom: 8,
-        boxShadow: '0 1px 3px rgba(15,23,42,0.06)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         cursor: isSelectMode ? 'pointer' : 'default',
       }}
     >
@@ -502,10 +506,10 @@ function BinItem({
         src={asset.thumbnailUri}
         alt=""
         style={{
-          width: 64,
-          height: 64,
+          width: 80,
+          height: 80,
           objectFit: 'cover',
-          borderRadius: theme.radius.sm,
+          borderRadius: theme.radius.md,
           flexShrink: 0,
           background: theme.colors.border,
         }}

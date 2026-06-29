@@ -131,7 +131,7 @@ export function HomeDashboard() {
   }
 
   return (
-    <div style={{ background: theme.colors.background, minHeight: '100vh', paddingBottom: 80 }}>
+    <div style={{ background: `radial-gradient(ellipse 120% 40% at 50% -5%, rgba(139,92,246,0.22) 0%, ${theme.colors.background} 60%)`, minHeight: '100dvh', paddingBottom: 80 }}>
       {/* Header */}
       <div
         style={{
@@ -206,22 +206,27 @@ export function HomeDashboard() {
       {/* Quick stats 2×2 grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, padding: '0 20px 16px' }}>
         {([
-          { value: '4,382', label: 'Photos & Videos' },
-          { value: '12.4 GB', label: 'Library Size' },
-          { value: '342', label: 'To Review' },
-          { value: '1.2 GB', label: 'Can Free Up' },
-        ] as const).map(({ value, label }) => (
+          { value: '4,382', label: 'Photos & Videos', accent: theme.colors.primary },
+          { value: '12.4 GB', label: 'Library Size', accent: theme.colors.muted },
+          { value: '342', label: 'To Review', accent: '#F59E0B' },
+          { value: '1.2 GB', label: 'Can Free Up', accent: theme.colors.keep },
+        ] as const).map(({ value, label, accent }) => (
           <div
             key={label}
             style={{
               background: theme.colors.surface,
               border: `1px solid ${theme.colors.border}`,
-              borderRadius: 14,
-              padding: '14px 12px',
+              borderRadius: 16,
+              padding: '16px 14px 14px',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              position: 'relative',
+              overflow: 'hidden',
             }}
           >
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, opacity: 0.7 }} />
             <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: theme.colors.text, lineHeight: 1.1 }}>{value}</p>
-            <p style={{ margin: '4px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted }}>{label}</p>
+            <p style={{ margin: '5px 0 0', fontSize: 11, fontWeight: 600, color: theme.colors.muted, letterSpacing: 0.2 }}>{label}</p>
           </div>
         ))}
       </div>
@@ -307,6 +312,14 @@ export function HomeDashboard() {
                 fontFamily: 'inherit',
               }}
             >
+              {/* Glass sheen */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%)',
+                borderRadius: 'inherit',
+                pointerEvents: 'none',
+              }} />
               {cat.icon && (
                 <span
                   aria-hidden="true"

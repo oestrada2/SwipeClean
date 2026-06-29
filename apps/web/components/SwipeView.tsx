@@ -177,7 +177,7 @@ export function SwipeView() {
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 72px)', background: theme.colors.background, overflow: 'hidden' }}>
+    <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 72px)', background: theme.colors.background, overflow: 'hidden' }}>
       {/* Header */}
       <div
         style={{
