@@ -165,23 +165,6 @@ export function HomeDashboard() {
             SwipeClean
           </h1>
         </div>
-        <button
-          onClick={() => setShowSortSheet(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: theme.colors.surfaceOverlay,
-            border: `1px solid ${theme.colors.divider}`,
-            borderRadius: 99,
-            padding: '8px 14px 8px 10px',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={theme.colors.textSecondary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/>
-          </svg>
-          <span style={{ fontSize: 13, fontWeight: 600, color: theme.colors.textSecondary }}>Sort</span>
-        </button>
       </div>
 
       <p
@@ -352,16 +335,28 @@ export function HomeDashboard() {
       </div>
 
       {/* Month archive — 2×2 grid */}
-      <p style={{
-        margin: '18px 20px 10px',
-        color: theme.colors.muted,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 1.2,
-        textTransform: 'uppercase',
-      }}>
-        By Month
-      </p>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', margin:'18px 20px 10px' }}>
+        <p style={{ margin:0, color:theme.colors.muted, fontSize:11, fontWeight:700, letterSpacing:1.2, textTransform:'uppercase' }}>
+          By Month
+        </p>
+        <button
+          onClick={() => setShowSortSheet(true)}
+          style={{
+            display:'flex', alignItems:'center', gap:5,
+            background: theme.colors.inputBackground,
+            border:`1px solid ${theme.colors.border}`,
+            borderRadius:99, padding:'5px 11px 5px 8px',
+            cursor:'pointer', fontFamily:'inherit',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={theme.colors.textSecondary} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="9" y1="18" x2="15" y2="18"/>
+          </svg>
+          <span style={{ fontSize:12, fontWeight:600, color:theme.colors.textSecondary }}>
+            {{ newest:'Newest', oldest:'Oldest', 'most-photos':'Most Photos', 'fewest-photos':'Fewest', 'most-storage':'Storage' }[monthSort]}
+          </span>
+        </button>
+      </div>
       <div style={{ padding: '0 14px 0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         {((): CategoryDef[] => {
           const months = categories.filter((c) => monthIds.has(c.id));
