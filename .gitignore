@@ -1,5 +1,8 @@
 node_modules/
 .expo/
+
+# Local API keys and secrets
+APIs/
 .next/
 dist/
 build/

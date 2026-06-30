@@ -1,15 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const env = (globalThis as any).process?.env ?? {};
+// Metro inlines EXPO_PUBLIC_* vars at bundle time
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
-const supabaseUrl: string = env.EXPO_PUBLIC_SUPABASE_URL ?? '';
-const supabaseAnonKey: string = env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn('Supabase env vars missing — check .env in apps/mobile/');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
-    persistSession: false, // add AsyncStorage persistence after proper install
+    persistSession: false,
     detectSessionInUrl: false,
   },
 });

@@ -69,6 +69,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setFlowScreen('onboarding');
       }
       setAuthLoading(false);
+    }).catch(() => {
+      setAuthLoading(false);
     });
 
     // Listen for auth state changes
