@@ -1,8 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-const supabaseUrl = env?.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = env?.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const env = (globalThis as any).process?.env ?? {};
 
-export const supabase =
-  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+const supabaseUrl: string = env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey: string = env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: false, // add AsyncStorage persistence after proper install
+    detectSessionInUrl: false,
+  },
+});

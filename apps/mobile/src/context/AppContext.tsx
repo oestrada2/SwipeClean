@@ -1,6 +1,8 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { mockHistory } from '../services/mockMedia';
+import { supabase } from '../services/supabase';
 import {
   CleanupStats,
   DeletionStats,
@@ -17,6 +19,8 @@ type AppContextType = {
   activeTab: Tab;
   modal: ModalScreen;
   isGuest: boolean;
+  authLoading: boolean;
+  user: User | null;
   hapticsEnabled: boolean;
   deleteBin: MediaAsset[];
   history: SessionRecord[];
@@ -29,7 +33,7 @@ type AppContextType = {
   setTab: (tab: Tab) => void;
   openModal: (modal: NonNullable<ModalScreen>) => void;
   closeModal: () => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
   showCleanupSuccess: (stats: CleanupStats) => void;
   showDeletionSuccess: (stats: DeletionStats) => void;
 
@@ -49,11 +53,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [modal, setModal] = useState<ModalScreen>(null);
   const [isGuest, setIsGuest] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const [hapticsEnabled, setHapticsEnabledState] = useState(true);
   const [deleteBin, setDeleteBin] = useState<MediaAsset[]>([]);
   const [history, setHistory] = useState<SessionRecord[]>(mockHistory);
   const [cleanupStats, setCleanupStats] = useState<CleanupStats | null>(null);
   const [deletionStats, setDeletionStats] = useState<DeletionStats | null>(null);
+
+  useEffect(() => {
+    // Check for existing session on launch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        setFlowScreen('onboarding');
+      }
+      setAuthLoading(false);
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        if (flowScreen === 'auth') setFlowScreen('onboarding');
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const completeAuth = useCallback((asGuest = false) => {
     setIsGuest(asGuest);
@@ -80,7 +109,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setModal(null);
   }, []);
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setIsGuest(false);
     setFlowScreen('auth');
     setActiveTab('home');
     setModal(null);
@@ -138,6 +170,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         activeTab,
         modal,
         isGuest,
+        authLoading,
+        user,
         hapticsEnabled,
         deleteBin,
         history,
