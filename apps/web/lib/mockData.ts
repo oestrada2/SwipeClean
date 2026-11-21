@@ -328,8 +328,6 @@ export function filterMedia(
   album?: string | null,
   settings?: CleanupSettings
 ): MediaAsset[] {
-  if (!category) return applySettings(demoMedia, settings);
-
   const now = new Date();
   // Shift dated sample items relative to today's date, so the demo's month and
   // recents filters remain usable even long after the original June 2026 mocks.
@@ -340,6 +338,7 @@ export function filterMedia(
     ...asset,
     createdAt: new Date(new Date(asset.createdAt).getTime() + shift).toISOString(),
   }));
+  if (!category) return applySettings(demoMedia, settings);
   let result: MediaAsset[] = demoMedia;
 
   switch (category) {
