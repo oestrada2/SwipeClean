@@ -328,29 +328,37 @@ export function filterMedia(
   album?: string | null,
   settings?: CleanupSettings
 ): MediaAsset[] {
-  if (!category) return applySettings(mockMedia, settings);
-
   const now = new Date();
-  let result: MediaAsset[] = mockMedia;
+  // Shift dated sample items relative to today's date, so the demo's month and
+  // recents filters remain usable even long after the original June 2026 mocks.
+  const anchor = new Date(2026, 5, 22).getTime();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const shift = today - anchor;
+  const demoMedia = mockMedia.map((asset) => ({
+    ...asset,
+    createdAt: new Date(new Date(asset.createdAt).getTime() + shift).toISOString(),
+  }));
+  if (!category) return applySettings(demoMedia, settings);
+  let result: MediaAsset[] = demoMedia;
 
   switch (category) {
     case 'all-photos':
-      result = mockMedia;
+      result = demoMedia;
       break;
     case 'photos-only':
-      result = mockMedia.filter((a) => a.kind === 'photo');
+      result = demoMedia.filter((a) => a.kind === 'photo');
       break;
     case 'videos-only':
-      result = mockMedia.filter((a) => a.kind === 'video');
+      result = demoMedia.filter((a) => a.kind === 'video');
       break;
     case 'recents': {
       const cutoff = new Date(now);
       cutoff.setDate(cutoff.getDate() - 30);
-      result = mockMedia.filter((a) => new Date(a.createdAt) >= cutoff);
+      result = demoMedia.filter((a) => new Date(a.createdAt) >= cutoff);
       break;
     }
     case 'on-this-day': {
-      result = mockMedia.filter((a) => {
+      result = demoMedia.filter((a) => {
         const d = new Date(a.createdAt);
         return (
           d.getMonth() === now.getMonth() &&
@@ -361,22 +369,22 @@ export function filterMedia(
       break;
     }
     case 'screenshots':
-      result = mockMedia.filter((a) => a.album === 'Screenshots');
+      result = demoMedia.filter((a) => a.album === 'Screenshots');
       break;
     case 'large-videos':
-      result = mockMedia.filter((a) => a.kind === 'video');
+      result = demoMedia.filter((a) => a.kind === 'video');
       break;
     case 'albums':
-      result = album ? mockMedia.filter((a) => a.album === album) : mockMedia;
+      result = album ? demoMedia.filter((a) => a.album === album) : demoMedia;
       break;
     case 'smart-cleanup':
-      result = mockMedia;
+      result = demoMedia;
       break;
     default: {
       if (category.startsWith('month-')) {
         const offset = parseInt(category.replace('month-', ''), 10);
         const target = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-        result = mockMedia.filter((a) => {
+        result = demoMedia.filter((a) => {
           const d = new Date(a.createdAt);
           return (
             d.getMonth() === target.getMonth() &&

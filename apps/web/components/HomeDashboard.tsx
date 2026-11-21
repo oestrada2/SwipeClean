@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { CleanupSettingsModal } from './CleanupSettingsModal';
 import { useApp } from '../lib/context';
-import { getMockAlbums } from '../lib/mockData';
+import { filterMedia, getMockAlbums } from '../lib/mockData';
 import { theme } from '../lib/theme';
 import type { CleanupCategory } from '../lib/types';
 
@@ -30,6 +30,8 @@ export function HomeDashboard() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAlbumPicker, setShowAlbumPicker] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showStorage, setShowStorage] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [selectedMediaType, setSelectedMediaType] = useState<'photos-only' | 'videos-only' | null>(null);
 
   const categories: CategoryDef[] = [
@@ -108,6 +110,8 @@ export function HomeDashboard() {
   ];
 
   const monthIds = new Set(['month-0', 'month-1', 'month-2', 'month-3']);
+  const demoMedia = filterMedia('all-photos', null, cleanupSettings);
+  const estimatedBytes = demoMedia.reduce((sum, asset) => sum + asset.sizeBytes, 0);
 
   function handleTap(cat: CategoryDef) {
     if (cat.isPremiumOnly && !isPremium) {
@@ -156,8 +160,8 @@ export function HomeDashboard() {
         <div style={{ display: 'flex', gap: 8 }}>
           {[
             { icon: '⚙', label: 'Settings', onTap: () => setShowSettings(true) },
-            { icon: '☁', label: 'Storage', onTap: undefined },
-            { icon: '⋯', label: 'More', onTap: undefined },
+            { icon: '☁', label: 'Storage', onTap: () => setShowStorage(true) },
+            { icon: '⋯', label: 'More', onTap: () => setShowMore(true) },
           ].map(({ icon, label, onTap }) => (
             <button
               key={label}
@@ -318,7 +322,7 @@ export function HomeDashboard() {
                       lineHeight: 1.6,
                     }}
                   >
-                    PRO
+                    PREMIUM
                   </span>
                 )}
               </div>
@@ -335,6 +339,9 @@ export function HomeDashboard() {
                 }}
               >
                 {cat.label}
+              </span>
+              <span style={{ position: 'absolute', top: 16, left: 22, borderRadius: 99, padding: '4px 9px', background: 'rgba(0,0,0,0.16)', fontSize: 11, color: '#fff', fontWeight: 700 }}>
+                {filterMedia(cat.id, null, cleanupSettings).length} items
               </span>
               {cat.sub && (
                 <span
@@ -355,6 +362,21 @@ export function HomeDashboard() {
       </div>
 
       {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
+      {showStorage && (
+        <SimpleOverlay title="Library overview" onClose={() => setShowStorage(false)}>
+          <p>{demoMedia.length} sample items available to review.</p>
+          <p>{(estimatedBytes / (1024 * 1024)).toFixed(1)} MB in sample media.</p>
+          <p style={{ color: '#94A3B8', fontSize: 13 }}>This is mock media, not your phone storage. Real access comes later.</p>
+        </SimpleOverlay>
+      )}
+      {showMore && (
+        <SimpleOverlay title="Quick actions" onClose={() => setShowMore(false)}>
+          {([['Open Delete Bin', 'bin'], ['View History', 'history']] as const).map(([label, tab]) => (
+            <button key={tab} onClick={() => { setShowMore(false); setTab(tab); }} style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.07)', color: 'white', border: 'none', borderRadius: 12, padding: 14, marginTop: 10, textAlign: 'left', fontSize: 15, cursor: 'pointer' }}>{label}</button>
+          ))}
+          <button onClick={() => { setShowMore(false); setShowSettings(true); }} style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.07)', color: 'white', border: 'none', borderRadius: 12, padding: 14, marginTop: 10, textAlign: 'left', fontSize: 15, cursor: 'pointer' }}>Cleanup Settings</button>
+        </SimpleOverlay>
+      )}
       {showSettings && (
         <CleanupSettingsModal
           settings={cleanupSettings}
@@ -490,7 +512,7 @@ function AlbumPickerModal({
   );
 }
 
-function PremiumModal({ onClose }: { onClose: () => void }) {
+export function PremiumModal({ onClose }: { onClose: () => void }) {
   return (
     <div
       style={{
@@ -527,7 +549,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
         />
         <span style={{ fontSize: 52 }}>✨</span>
         <h3 style={{ margin: '12px 0 8px', fontSize: 26, fontWeight: 900, color: '#fff' }}>
-          SwipeClean Pro
+          SwipeClean Premium
         </h3>
         <p
           style={{
@@ -538,7 +560,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
           }}
         >
           Smart Cleanup, Large Videos, duplicate detection, blurry photo finder, and AI
-          suggestions are Pro features.
+          suggestions are Premium features. This is a preview; billing is not active.
         </p>
         <button
           style={{
@@ -556,7 +578,7 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
           }}
           onClick={onClose}
         >
-          Upgrade to Pro
+          Premium Preview · $4.99/week
         </button>
         <button
           style={{
@@ -575,6 +597,17 @@ function PremiumModal({ onClose }: { onClose: () => void }) {
           Maybe later
         </button>
       </div>
+    </div>
+  );
+}
+
+function SimpleOverlay({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.74)', zIndex: 250, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+      <section role="dialog" aria-modal="true" aria-label={title} onClick={(event) => event.stopPropagation()} style={{ width: '100%', maxWidth: 480, borderRadius: '24px 24px 0 0', padding: '24px 24px 32px', background: '#1F2937', color: '#fff', boxShadow: '0 -16px 48px rgba(0,0,0,.3)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><h2 style={{ fontSize: 20, margin: 0 }}>{title}</h2><button onClick={onClose} aria-label="Close" style={{ background: 'transparent', color: '#fff', border: 0, fontSize: 26, cursor: 'pointer' }}>×</button></div>
+        <div style={{ marginTop: 20 }}>{children}</div>
+      </section>
     </div>
   );
 }
