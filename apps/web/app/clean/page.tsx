@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { CleanupSettingsModal } from '../../components/CleanupSettingsModal';
 import { DeleteBinView } from '../../components/DeleteBinView';
 import { HistoryView } from '../../components/HistoryView';
-import { HomeDashboard } from '../../components/HomeDashboard';
+import { HomeDashboard, PremiumModal } from '../../components/HomeDashboard';
 import { SwipeView } from '../../components/SwipeView';
 import { AppProvider, useApp } from '../../lib/context';
 import { theme } from '../../lib/theme';
 import type { Tab } from '../../lib/types';
 
 const TABS: Array<{ id: Tab; label: string; icon: string }> = [
-  { id: 'home', label: 'Home', icon: '🏠' },
+  { id: 'home', label: 'Home', icon: '⌂' },
+  { id: 'swipe', label: 'Swipe', icon: '↔' },
   { id: 'bin', label: 'Bin', icon: '🗑' },
   { id: 'history', label: 'History', icon: '📋' },
 ];
@@ -18,18 +19,20 @@ const TABS: Array<{ id: Tab; label: string; icon: string }> = [
 function AppShell() {
   const { activeTab, setTab, deleteBin, cleanupSettings, setCleanupSettings } = useApp();
   const [showSettings, setShowSettings] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   return (
     <div
       style={{
-        minHeight: '100vh',
-        background: theme.colors.background,
+        minHeight: '100dvh',
+        background: '#080D19',
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       {/* Content */}
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 72 }}>
+      <div style={{ flex: 1, width: '100%', maxWidth: 480, margin: '0 auto', overflowY: 'auto', paddingBottom: 92, background: theme.colors.background, boxShadow: '0 0 60px rgba(0,0,0,0.18)' }}>
         {activeTab === 'home' && <HomeDashboard />}
         {activeTab === 'swipe' && <SwipeView />}
         {activeTab === 'bin' && <DeleteBinView />}
@@ -43,6 +46,8 @@ function AppShell() {
           bottom: 0,
           left: 0,
           right: 0,
+          maxWidth: 480,
+          margin: '0 auto',
           height: 72,
           background: theme.colors.surface,
           borderTop: `1px solid ${theme.colors.border}`,
@@ -51,6 +56,7 @@ function AppShell() {
           justifyContent: 'space-around',
           padding: '0 8px',
           zIndex: 100,
+          boxShadow: '0 -12px 34px rgba(0,0,0,0.18)',
         }}
       >
         {TABS.map((tab) => {
@@ -132,9 +138,10 @@ function AppShell() {
           settings={cleanupSettings}
           onApply={setCleanupSettings}
           onClose={() => setShowSettings(false)}
-          onShowPaywall={() => setShowSettings(false)}
+          onShowPaywall={() => { setShowSettings(false); setShowPaywall(true); }}
         />
       )}
+      {showPaywall && <PremiumModal onClose={() => setShowPaywall(false)} />}
     </div>
   );
 }
