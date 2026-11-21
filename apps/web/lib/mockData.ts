@@ -375,7 +375,7 @@ export function filterMedia(
       result = demoMedia.filter((a) => a.kind === 'video');
       break;
     case 'albums':
-      result = album ? demoMedia.filter((a) => a.album === album) : mockMedia;
+      result = album ? demoMedia.filter((a) => a.album === album) : demoMedia;
       break;
     case 'smart-cleanup':
       result = demoMedia;
