@@ -322,7 +322,7 @@ export function HomeDashboard() {
                       lineHeight: 1.6,
                     }}
                   >
-                    PRO
+                    PREMIUM
                   </span>
                 )}
               </div>
